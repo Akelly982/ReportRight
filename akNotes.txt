@@ -1,0 +1,126 @@
+
+
+
+// Install expo client
+CMD#    npm install -- global expo-cli
+
+Create Project
+CMD#    expo init myProject
+    // Then select blank project. this will install expo, its dependencies and the starter files app.js and app.json etc
+
+
+CMD#    expo --version
+
+    https://docs.expo.dev/versions/latest/#each-expo-sdk-version-depends-on-a
+    // Each Verion of expo depends on a specific version of React Native
+    // Expo 4.11.0   ==  React Native 0.63.3
+
+
+
+
+//---------------------------------------------
+//---------------------------------------------
+
+// Install Libary for PDF
+// https://www.npmjs.com/package/react-native-pdf-lib
+
+// This libary had a lot of deprecated libary attached to it 
+// I may find another PDF converter libary
+
+x  CMD#  npm install react-native-pdf-lib --save
+x  CMD#  react-native link react-native-pdf-lib
+
+
+
+
+//---------------------------------------------
+//---------------------------------------------
+
+// Install Libary for Expo Print
+// https://docs.expo.dev/versions/latest/sdk/print/
+
+// helpfull doc below
+// https://upplabs.com/blog/how-to-generate-a-pdf-document-in-a-react-native-project/
+
+#CMD    expo install expo-print
+
+
+
+// expo file system  // this is shared by all expo apps on a local filesystem
+https://docs.expo.dev/versions/latest/sdk/filesystem/
+#CMD    expo install expo-file-system
+
+
+//Expo notes on both below libaries should work for both mobile devices but not for web
+
+// FileSystem for Android -- media libary
+#CMD     expo install expo-media-library
+
+// FileSystem for IOS  -- IOS   
+#CMD     expo install expo-sharing
+
+
+
+// ------------------
+
+//expo react native web view for mobile devices
+https://docs.expo.dev/versions/v42.0.0/sdk/webview/
+https://github.com/react-native-webview/react-native-webview
+https://github.com/react-native-webview/react-native-webview/blob/master/docs/Getting-Started.md
+https://github.com/react-native-webview/react-native-webview/blob/master/docs/Reference.md#style
+
+
+
+
+//---------------------------------------------
+//---------------------------------------------
+
+// React Navigation
+
+#CMD    npm install @react-navigation/native
+#CMD    expo install react-native-screens react-native-safe-area-context
+#CMD    npm install @react-navigation/native-stack
+
+//---------------------------------------------
+//---------------------------------------------
+
+HelpFull commands -----
+
+npm install
+npm start
+expo start
+
+npm audit fix
+npm audit
+
+-----------------------
+
+expo build:android 
+   - genereate keystore for first upload
+
+credentials are handled expo externally
+and are connected to the slug in your app.json
+
+expo fetch:android:keystore
+expo credentials:manager
+
+-----------------------
+
+
+
+//----------------------------------------------------
+// ---------------------------------------------------
+
+
+Their is a issue with overwrriting fontFamily at 
+locataion:  node_modules\expo\build\Expo.fx.js:20:4 in <global>
+
+// If expo-font is installed and the style preprocessor is available, use it to parse fonts.
+
+commented out code 
+line 19 
+// if (StyleSheet.setStyleAttributePreprocessor) {
+//     StyleSheet.setStyleAttributePreprocessor('fontFamily', Font.processFontFamily);
+// }
+
+Note this fix dose not seem to effect expo styling 
