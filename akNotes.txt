@@ -18,59 +18,6 @@ CMD#    expo --version
 
 
 
-//---------------------------------------------
-//---------------------------------------------
-
-// Install Libary for PDF
-// https://www.npmjs.com/package/react-native-pdf-lib
-
-// This libary had a lot of deprecated libary attached to it 
-// I may find another PDF converter libary
-
-x  CMD#  npm install react-native-pdf-lib --save
-x  CMD#  react-native link react-native-pdf-lib
-
-
-
-
-//---------------------------------------------
-//---------------------------------------------
-
-// Install Libary for Expo Print
-// https://docs.expo.dev/versions/latest/sdk/print/
-
-// helpfull doc below
-// https://upplabs.com/blog/how-to-generate-a-pdf-document-in-a-react-native-project/
-
-#CMD    expo install expo-print
-
-
-
-// expo file system  // this is shared by all expo apps on a local filesystem
-https://docs.expo.dev/versions/latest/sdk/filesystem/
-#CMD    expo install expo-file-system
-
-
-//Expo notes on both below libaries should work for both mobile devices but not for web
-
-// FileSystem for Android -- media libary
-#CMD     expo install expo-media-library
-
-// FileSystem for IOS  -- IOS   
-#CMD     expo install expo-sharing
-
-
-
-// ------------------
-
-//expo react native web view for mobile devices
-https://docs.expo.dev/versions/v42.0.0/sdk/webview/
-https://github.com/react-native-webview/react-native-webview
-https://github.com/react-native-webview/react-native-webview/blob/master/docs/Getting-Started.md
-https://github.com/react-native-webview/react-native-webview/blob/master/docs/Reference.md#style
-
-
-
 
 //---------------------------------------------
 //---------------------------------------------
@@ -124,3 +71,52 @@ line 19
 // }
 
 Note this fix dose not seem to effect expo styling 
+
+
+
+
+
+
+
+
+
+####  Now that  Expo React native and React Navigation are installed add our PDF libary and WebViewer
+####          ########               #########             ##########                   ############
+//---------------------------------------------
+//---------------------------------------------
+
+// Install Libary for Expo Print
+// https://docs.expo.dev/versions/latest/sdk/print/
+
+// helpfull doc below
+// https://upplabs.com/blog/how-to-generate-a-pdf-document-in-a-react-native-project/
+
+#CMD    expo install expo-print
+
+
+
+// expo file system  // this is shared by all expo apps on a local filesystem
+https://docs.expo.dev/versions/latest/sdk/filesystem/
+#CMD    expo install expo-file-system
+
+
+//Expo notes on both below libaries should work for both mobile devices but not for web
+
+// FileSystem for Android -- media libary
+#CMD     expo install expo-media-library
+
+// FileSystem for IOS  -- IOS   
+#CMD     expo install expo-sharing
+
+
+
+// ------------------
+
+//expo react native web view for mobile devices
+https://docs.expo.dev/versions/v42.0.0/sdk/webview/
+https://github.com/react-native-webview/react-native-webview
+https://github.com/react-native-webview/react-native-webview/blob/master/docs/Getting-Started.md
+https://github.com/react-native-webview/react-native-webview/blob/master/docs/Reference.md#style
+
+//---------------------------------------------
+//---------------------------------------------
