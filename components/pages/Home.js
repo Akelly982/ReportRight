@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Spacer } from './Spacer.js';
+import { Spacer } from '../Spacer';
 
 
 
 const calculationList = [
-    {id: '1', name: "Hire Purchase and Lease calculations"},
-    {id: '2', name: "hypothertical Additional item lorem ipsum ipsum da lorum ma lorums"},
+    {id: 1, name: "Hire Purchase and Lease calculations", pageName: "HirePurchaseAndLease", pageReady: true},
+    {id: 2, name: "hypothertical Additional item lorem ipsum ipsum da lorum ma lorums"},
     // {id: '3', name: "hypothertical Additional item"},
     // {id: '4', name: "hypothertical Additional item"},
     // {id: '5', name: "hypothertical Additional item"},
@@ -25,10 +25,27 @@ export function Home(props) {
     const navigation = useNavigation()
 
 
+    const navigateFromHome = (recievedItem) => {
+
+        if (recievedItem.pageReady){
+            navigation.navigate(recievedItem.pageName)
+        }else{
+            alert('"' + recievedItem.name + '" is not yet fully setup.')
+        }
+    }
 
     const renderItem = ({item}) => {
+
+        
+        const itemLongPress = () => {
+            alert("long press: " + item.id)
+        }
+
+        // Quick note longPress works here from pressable due to being extended from the same parent class (i learnt this awhile ago)
         return (
-            <TouchableOpacity style={HomeStyles.itemCont}>
+            <TouchableOpacity style={HomeStyles.itemCont} 
+                            onPress={ () => navigateFromHome(item)}
+                            onLongPress={ () => itemLongPress()}> 
                 <Text style={HomeStyles.itemText}> {item.name} </Text>
             </TouchableOpacity>
         )
@@ -51,9 +68,7 @@ export function Home(props) {
 const HomeStyles = StyleSheet.create({
   container: {
     flex:1,
-    // display:'flex',
-    backgroundColor: '#ffffff',
-    minHeight: 200,
+    backgroundColor: '#fff',
   },
 
   itemCont: {
