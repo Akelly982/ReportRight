@@ -1,27 +1,70 @@
 import React from 'react';
 import {useState,useEffect} from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Animated} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {Spacer} from "../Spacer";
+
+
+
+
+
+
+
+
+
+
+
+
+// jsClass
+// TODO make it an import to this page
+class LeaseReport {
+    constructor (interest,principle,numberOfPayments,installmentAmmount,residual){
+        this.interst = interest;
+        this.principle = principle;
+        this.numberOfPayments = numberOfPayments;
+        this.installmentAmmount = installmentAmmount;
+        this.residual = residual;
+
+        
+    }
+
+    getPrinciple() {
+        return this.principle
+    }
+}
+
+
+
 
 export function HirePurchaseAndLease(props) {
     const navigation = useNavigation()
 
-    const [clientName,setClientName] = useState('')
-    const [principle,setPrinciple] = useState('')
-    const [interest,setInterest] = useState('')
-    const [numberOfPayments,setNumberOfPayments] = useState('')
-    const [installmentAmmount,setInstallmentAmmount] = useState('')
-    const [residual,setResidual] = useState('')
+
+    // report
+    const [report,setReport] = useState(null)
+
+    // user inputs 
+    const INTEREST_INITVALUE = 10
+    const PRINCIPLE_INITVALUE = 50000
+    const NUMBEROFPAYMENTS_INITVALUE = 10
+    const INSTALLMENTAMMOUNT_INITVALUE = 5000
+    const RESIDUAL_INITVALUE = 0
+
+    const [clientName,setClientName] = useState(null)
+    const [interest,setInterest] = useState(INTEREST_INITVALUE)
+    const [principle,setPrinciple] = useState(PRINCIPLE_INITVALUE)
+    const [numberOfPayments,setNumberOfPayments] = useState(NUMBEROFPAYMENTS_INITVALUE)
+    const [installmentAmmount,setInstallmentAmmount] = useState(INSTALLMENTAMMOUNT_INITVALUE)
+    const [residual,setResidual] = useState(RESIDUAL_INITVALUE)
 
 
     // Setup Radio Buttons
     const HIREPURCHASE = 'HirePurchase'
     const LEASE = 'Lease'
-    const [reportTypeRadioBtn,setReportTypeRadioButton] = useState(HIREPURCHASE)
+    const [reportTypeRadioBtn,setReportTypeRadioButton] = useState(LEASE)
     
 
     const PRINCIPLE = 'Principle'
-    const INTEREST = 'Interest'
     const NUMBEROFPAYMENTS = 'NumberOfPaymets'
     const INSTALLMENTAMMOUNT = 'InstallmentAmmount'
     const RESIDUAL = 'Residual'
@@ -32,8 +75,8 @@ export function HirePurchaseAndLease(props) {
     const FORTNIGHTLY = 'Fornightly'
     const MONTHLY = 'Monthly'
     const QUARTERLY = 'Quarterly'
-    const HALFYEARLY = "HalfYearly"
-    const ANNUALLY = 'ANNUALLY'
+    const HALFYEARLY = "Half Yearly"
+    const ANNUALLY = 'Annually'
     const [paymentFrequencyRadioBtn,setPaymentFrequencyRadioButton] = useState(MONTHLY)
 
 
@@ -45,17 +88,44 @@ export function HirePurchaseAndLease(props) {
 
 
     const generateReport = () => { 
-        alert('report generation')
+        console.log('report generation started')
+
+        // ensure all required fields are filled in 
+        if (principle == null ||
+            interest == null ||
+            numberOfPayments == null ||
+            installmentAmmount == null ||
+            residual == null){
+
+                alert('Please fill in all the required fields')
+    
+        }else{
+            console.log('InputFields are filled')
+
+            const r = new LeaseReport(interest,principle,numberOfPayments,installmentAmmount,residual)
+
+            console.log(r.getPrinciple())
+
+        }
     }
 
 
     const viewReport = () => { 
-        alert('view report')
+        if(report == null){
+            alert("Please generate the report first")
+        }else{
+            alert("View Report")
+        }
+        
     }
 
 
     const downloadReport = () => { 
-        alert('download report')
+        if(report == null){
+            alert("Please generate the report first")
+        }else{
+            alert("View Report")
+        }
     }
 
 
@@ -82,6 +152,9 @@ export function HirePurchaseAndLease(props) {
                 </View>
             </View>
 
+
+
+
             {/* Input Fields  */}
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
@@ -93,7 +166,7 @@ export function HirePurchaseAndLease(props) {
                     {/*1 ClientName */}
                     <View style={hplStyles.input}>
                         <View style={hplStyles.inputContText}>
-                            <Text>ClientName: (optional)</Text>
+                            <Text>Client Name: (optional)</Text>
                         </View>
                         <TextInput
                             onChangeText={ (val) => setClientName(val) }
@@ -102,6 +175,21 @@ export function HirePurchaseAndLease(props) {
                             keyboardType="default"
                         />
                     </View>
+
+                    {/*1 Interest */}
+                    <View style={hplStyles.input}>
+                        <View style={hplStyles.inputContText}>
+                            <Text>Interest %:</Text>
+                        </View>
+                        <TextInput
+                            onChangeText={ (val) => setInterest(val)}
+                            style={hplStyles.inputField}
+                            keyboardType="numeric"
+                            value={INTEREST_INITVALUE.toString()}  //value has to initialized as a string
+                        />
+                    </View>
+
+                    <Spacer height={50}/>
 
                     {/*2 Principle */}
                     <View style={hplStyles.input}>
@@ -116,24 +204,10 @@ export function HirePurchaseAndLease(props) {
                             style={hplStyles.inputField}
                             placeholder="50000"
                             keyboardType="numeric"
+                            value={PRINCIPLE_INITVALUE.toString()}
                         />
                     </View>
 
-                    {/*2 interest */}
-                    <View style={hplStyles.input}>
-                        <View style={hplStyles.inputContTextAndRadioButton}>
-                            <Text>Interest %:</Text>
-                            <TouchableOpacity onPress={() => setInputFieldRadioButton(INTEREST)}>
-                                <Text style={(inputFieldRadioBtn == INTEREST) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <TextInput
-                            onChangeText={ (val) => setInterest(val) }
-                            style={hplStyles.inputField}
-                            placeholder="5"
-                            keyboardType="numeric"
-                        />
-                    </View>
                     {/*2 numberOfPayments */}
                     <View style={hplStyles.input}>
                         <View style={hplStyles.inputContTextAndRadioButton}>
@@ -147,6 +221,7 @@ export function HirePurchaseAndLease(props) {
                             style={hplStyles.inputField}
                             placeholder="10"
                             keyboardType="numeric"
+                            value={NUMBEROFPAYMENTS_INITVALUE.toString()}
                         />
                     </View>
 
@@ -163,6 +238,7 @@ export function HirePurchaseAndLease(props) {
                             style={hplStyles.inputField}
                             placeholder="5000"
                             keyboardType="numeric"
+                            value={INSTALLMENTAMMOUNT_INITVALUE.toString()}
                         />
                     </View>
 
@@ -179,6 +255,7 @@ export function HirePurchaseAndLease(props) {
                             style={hplStyles.inputField}
                             placeholder="0"
                             keyboardType="numeric"
+                            value={RESIDUAL_INITVALUE.toString()}
                         />
                     </View>
 
@@ -196,15 +273,17 @@ export function HirePurchaseAndLease(props) {
             {/* Payment Frequency */}
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
+                    <Text> Payment Frequency </Text>
+
                     <View style={hplStyles.rbFrequencyCont}>
                             <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(WEEKLY)}>
+                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(WEEKLY)}>
                                     <Text style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
                                 </TouchableOpacity>
                                 <Text> {WEEKLY} </Text>
                             </View>
                             <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(FORTNIGHTLY)}>
+                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(FORTNIGHTLY)}>
                                     <Text style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
                                 </TouchableOpacity>
                                 <Text> {FORTNIGHTLY} </Text>
@@ -219,7 +298,7 @@ export function HirePurchaseAndLease(props) {
                                 <Text> {MONTHLY} </Text>
                             </View>
                             <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(QUARTERLY)}>
+                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(QUARTERLY)}>
                                     <Text style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
                                 </TouchableOpacity>
                                 <Text> {QUARTERLY} </Text>
@@ -228,13 +307,13 @@ export function HirePurchaseAndLease(props) {
 
                     <View style={hplStyles.rbFrequencyCont}>
                             <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(HALFYEARLY)}>
+                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(HALFYEARLY)}>
                                     <Text style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
                                 </TouchableOpacity>
                                 <Text> {HALFYEARLY} </Text>
                             </View>
                             <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(ANNUALLY)}>
+                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(ANNUALLY)}>
                                     <Text style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
                                 </TouchableOpacity>
                                 <Text> {ANNUALLY} </Text>
@@ -245,6 +324,8 @@ export function HirePurchaseAndLease(props) {
 
 
 
+
+            {/* Generate Report */}
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
                     <TouchableOpacity style={hplStyles.Btn} onPress={() => generateReport()}>
@@ -253,12 +334,15 @@ export function HirePurchaseAndLease(props) {
                 </View>
             </View>
 
+
+
+            {/* View and Download */}
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
-                    <TouchableOpacity style={hplStyles.Btn} onPress={() => viewReport()}>
+                    <TouchableOpacity style={(report == null) ? hplStyles.btnDisabled : hplStyles.btn} onPress={() => viewReport()}>
                         <Text style={hplStyles.BtnText}> View Report </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={hplStyles.Btn} onPress={() => downloadReport()}>
+                    <TouchableOpacity style={(report == null) ? hplStyles.btnDisabled : hplStyles.btn} onPress={() => downloadReport()}>
                         <Text style={hplStyles.BtnText}> Download Report </Text>
                     </TouchableOpacity>
                 </View>
@@ -268,6 +352,15 @@ export function HirePurchaseAndLease(props) {
         </ScrollView>
     );
 }
+
+
+
+
+
+
+// ------------------------------------------------------------
+// -------- STYLES --------------------------------------------
+
 
 const hplStyles = StyleSheet.create({
     container: {
@@ -279,8 +372,7 @@ const hplStyles = StyleSheet.create({
         backgroundColor: "#e8e8e8",
         paddingVertical: 25,
         marginVertical: 10,
-        marginLeft: '10%',
-        marginRight: '10%',
+        marginHorizontal: '5%',
     },
 
     innerCont:{
@@ -370,6 +462,17 @@ const hplStyles = StyleSheet.create({
 
     BtnText:{
         color: '#e8e8e8'
+    },
+
+    btnDisabled:{
+        marginVertical: 5,
+        backgroundColor: '#3b3b3b',
+        borderRadius: 5,
+        minHeight: 40,
+
+        display:'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     calculateSelectedInputBtn:{
