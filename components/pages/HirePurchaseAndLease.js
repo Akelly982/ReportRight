@@ -3,41 +3,81 @@ import {useState,useEffect} from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Animated} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {Spacer} from "../Spacer";
+// import { LeaseReport } from '../jsClass/LeaseReport';
 
 
 
 
-
-
-
-
-
-
-
-
-// jsClass
-// TODO make it an import to this page
 class LeaseReport {
-    constructor (annualInterestRate,principle,numberOfPayments,installmentAmmount,residual){
-        this.annualInterestRate = annualInterestRate;
+    constructor (clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal){
+        this.clientName = clientName
         this.principle = principle;
+        this.annualInterestRate = annualInterestRate;
         this.numberOfPayments = numberOfPayments;
         this.installmentAmmount = installmentAmmount;
-        this.residual = residual;
+        this.paymentFrequencyRadioBtn = paymentFrequencyRadioBtn;
+        this.paymentFrequencyVal = paymentFrequencyVal;
+
+        this.accountBalance = installmentAmmount * numberOfPayments
+        this.interestOwing = (installmentAmmount * numberOfPayments) - principle
+         
+    }
+
+    getClientName(){
+        return this.clientName
+    }
+
+    getPrinciple(){
+        return this.principle
+    }
+
+    getAnnualInterestRate(){
+        return this.annualInterestRate
+    }
+
+    getNumberOfPayments(){
+        return this.numberOfPayments
+    }
+    
+    getInstallmentAmmount(){
+        return this.installmentAmmount
+    }
+
+    getPaymentFrequencyRadioBtn(){
+        return this.paymentFrequencyRadioBtn
+    }
+
+    getPaymentFrequencyVal(){
+        return this.paymentFrequencyVal
+    }
+
+    getInterestOwing(){
+        return this.interestOwing
+    }
+
+    getAccountBalance(){
+        return this.accountBalance
+    }
+
+
+
+    incrementToArray(arr){
         
     }
 
-    getPrinciple() {
-        return this.principle
-    }
+
 }
 
 
 
 
+// -------------------------------------------------------------------
+// -------------------------------------------------------------------
+
+
 export function HirePurchaseAndLease(props) {
     const navigation = useNavigation()
-
+    
 
     // report
     const [report,setReport] = useState(null)
@@ -46,15 +86,15 @@ export function HirePurchaseAndLease(props) {
     const ANNUALINTERESTRATE_INITVALUE = 4.5
     const PRINCIPLE_INITVALUE = 100000
     const NUMBEROFPAYMENTS_INITVALUE = 60
-    const INSTALLMENTAMMOUNT_INITVALUE = 'xxxx'
-
+    const INSTALLMENTAMMOUNT_INITVALUE = null
+    const PAYMENTFREQUENCYVAL_INITVALUE = 12
 
     const [clientName,setClientName] = useState(null)
     const [annualInterestRate,setAnnualInterestRate] = useState(ANNUALINTERESTRATE_INITVALUE)
     const [principle,setPrinciple] = useState(PRINCIPLE_INITVALUE)
     const [numberOfPayments,setNumberOfPayments] = useState(NUMBEROFPAYMENTS_INITVALUE)
     const [installmentAmmount,setInstallmentAmmount] = useState(INSTALLMENTAMMOUNT_INITVALUE)
-    const [paymentFrequencyVal,setPaymentFrequencyVal] = useState()
+    const [paymentFrequencyVal,setPaymentFrequencyVal] = useState(PAYMENTFREQUENCYVAL_INITVALUE)
     
 
 
@@ -74,6 +114,7 @@ export function HirePurchaseAndLease(props) {
     const QUARTERLY = 'Quarterly'
     const HALFYEARLY = "Half Yearly"
     const ANNUALLY = 'Annually'
+
     const [paymentFrequencyRadioBtn,setPaymentFrequencyRadioButton] = useState(MONTHLY)
 
 
@@ -118,26 +159,25 @@ export function HirePurchaseAndLease(props) {
 
     const calculateInstallmentAmmount = () => {
         //alert('calculate Instalment ammount')
-        console.log("--- calc instalment ammount --")
-        console.log("principle: " + principle)
-        console.log("Annual Interest Rate: " + annualInterestRate)
-        console.log("numberOfPayments: " + numberOfPayments)
-        console.log("paymentFrequency RB: " + paymentFrequencyRadioBtn)
+        // console.log("--- calc instalment ammount ---")
+        // console.log("principle: " + principle)
+        // console.log("Annual Interest Rate: " + annualInterestRate)
+        // console.log("numberOfPayments: " + numberOfPayments)
+        // console.log("paymentFrequency RB: " + paymentFrequencyRadioBtn)
+        // console.log("paymentFrequencyVal: " + paymentFrequencyVal)
 
         // Payment Frequency is always set due to it being a radio btn (monthly == default) 
         if (principle == null ||
             annualInterestRate == null ||
-            numberOfPayments == null){
+            numberOfPayments == null ||
+            paymentFrequencyVal == null){
 
-                alert("Please ensure all fields are filled in")
+                alert("Please ensure all input fields are filled in")
 
         }else{
-            
-
-            console.log("paymentFrequencyVal: " + paymentFrequencyVal)
 
 
-            // REFERENCE 
+            // REFERENCE (from goolge collab / sites)
                 // This next bit is a bit difficult but the expression you need is below
                     // incrementsPerYear = 12
                     // numYears = numPayments / incrementsPerYear
@@ -158,7 +198,8 @@ export function HirePurchaseAndLease(props) {
 
             
             let num = ((principle * (annualInterestRate / 100) )/ paymentFrequencyVal) / (1- Math.pow((1 + ((annualInterestRate / 100) / paymentFrequencyVal)),(-1 * numberOfPayments)))
-            num = num.toFixed(2)  // 
+            console.log(typeof num)
+            num = num.toFixed(2)
             setInstallmentAmmount( num )
             console.log("installmentAmmount: " + installmentAmmount)
         }
@@ -174,18 +215,161 @@ export function HirePurchaseAndLease(props) {
         if (principle == null ||
             annualInterestRate == null ||
             numberOfPayments == null ||
+            paymentFrequencyVal == null ||
             installmentAmmount == null){
-
-                alert('Please fill in all the required fields')
-    
-        }else{
-            console.log('InputFields are filled')
-
-            const r = new LeaseReport(annualInterestRate,principle,numberOfPayments,installmentAmmount,residual)
-
-            console.log(r.getPrinciple())
-
+            alert('Please fill in all the required fields and have calculated the installment ammount')
+            return
         }
+
+
+        //recalculate installment amount and ensure it is the same
+        let num = ((principle * (annualInterestRate / 100) )/ paymentFrequencyVal) / (1- Math.pow((1 + ((annualInterestRate / 100) / paymentFrequencyVal)),(-1 * numberOfPayments)))
+        num = num.toFixed(2)  
+    
+        if(num != installmentAmmount){
+            alert('installment ammount miss match calculate again')
+            return
+        }
+
+        // Beign Generation
+        console.log("--- Generate report ---")
+        // const report = new LeaseReport(clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal)
+        // console.log(report.getPrinciple())
+        
+        //Our Column Names
+        let incrementArrColumnNames = ["Installment number",
+                      "Principle Component",
+                      "Interest Component",
+                      "Cumulative Interest",
+                      "Interest Owing",
+                      "Principle Outstanding",
+                      "AccountBalance",
+                      "Cumulative Principle"]
+
+        
+        
+        
+        
+        // initial setup
+            //Arrays  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+        let incrementArr = []   //blank array to hold rows
+        
+        // vars
+        let initInterestOwing = (installmentAmmount * numberOfPayments) - principle
+        let initAccountBalance = installmentAmmount * numberOfPayments
+        let cumulativeInterest = 0    
+        let cumulativePrinciple = 0                  
+        let interestOwing = initInterestOwing
+        let principleOutstanding = principle
+        let accountBalance = initAccountBalance
+
+        
+        // Loop
+        let decimalPlaces = 2
+        let i = 1
+        while(i <= numberOfPayments){
+            //set secondarys
+            let currentInterestComp = (principleOutstanding * (annualInterestRate / 100)) / paymentFrequencyVal
+            let currentPrincipleComponent = installmentAmmount - currentInterestComp
+            
+            // convert secondary vars to 2 decimal places
+            // currentInterestComp = currentInterestComp.toFixed(2)
+            // currentPrincipleComponent = currentPrincipleComponent.toFixed(2)
+
+
+            //increment the mains
+                //NOTE -= AND =+ dont work here being javascript apparently
+            cumulativePrinciple = cumulativePrinciple + currentPrincipleComponent
+            cumulativeInterest = cumulativeInterest + currentInterestComp
+            interestOwing = interestOwing - currentInterestComp
+            principleOutstanding = principleOutstanding - currentPrincipleComponent
+            accountBalance = accountBalance - installmentAmmount
+
+            // convert main vars to 2 decimal places   num = num.toFixed(2) 
+            // console.log(typeof cumulativePrinciple)
+            // console.log(cumulativePrinciple.toFixed(2))
+            // let x = cumulativePrinciple.toFixed(2)
+            // console.log(x)
+            // cumulativeInterest = cumulativeInterest.toFixed(2)
+            // interestOwing = interestOwing.toFixed(2)
+            // principleOutstanding = principleOutstanding.toFixed(2)
+            // accountBalance = accountBalance.toFixed(2)
+        
+            // create row
+            let activeRow = [i,
+                currentPrincipleComponent.toFixed(2),
+                currentInterestComp.toFixed(2),
+                cumulativeInterest.toFixed(2),
+                interestOwing.toFixed(2),
+                principleOutstanding.toFixed(2),
+                accountBalance.toFixed(2),
+                cumulativePrinciple.toFixed(2)]
+
+            // debug log
+            // console.log(activeRow)
+
+            //append arr (js is push)
+            incrementArr.push(activeRow)
+
+            //Repeat
+            i = i+1
+        }
+        
+        // log init data 
+        console.log('---------HEADER----------------------')
+        console.log("Generation complete - log")
+        console.log('ClientName:' + clientName)
+        console.log('principle: ' + principle)
+        console.log('Annual Interest Rate: ' + annualInterestRate)
+        console.log('Installment Ammount: ' + installmentAmmount)
+        console.log('frequency: ' + paymentFrequencyRadioBtn)
+        console.log('frequencyVal: ' + paymentFrequencyVal)
+        console.log('------------------------------------')
+
+
+        console.log('---------Data----------------------')
+        // log column names
+        let strColumns = ''
+        incrementArrColumnNames.forEach(e => {
+            strColumns = strColumns + e + "  "
+        });
+        console.log(strColumns)
+
+        // // print rows
+        incrementArr.forEach(row => {
+            let strRow = ''
+            row.forEach(e => {
+                strRow = strRow + e.toString() + "  "
+            });
+            console.log(strRow)
+        })
+
+        //printRows v2 show year vals
+        // let year = 1
+        // let strRow = ''
+        // let r = 3
+        // while(r < incrementArr.length){
+            
+        //     //read row
+        //     // incrementArr[r].forEach(e => {
+        //     //     strRow = strRow + e.toString() + "  "
+        //     // });
+        //     incrementArr[r].forEach(e => {
+        //         strRow = strRow + e.toString() + "  "
+        //         console.log(strRow.slice(0,99))
+        //     })
+            
+        //     // //if year modulous 0, End year stmt with stats
+        //     // if(paymentFrequencyVal%i == 0){
+        //     //     console.log("Year: " + year + " / PrinciplePaid: " + incrementArr[i][7] + " / InterestPaid: " + incrementArr[i][3])
+        //     //     year = year + 1
+        //     // }
+            
+        //     r++
+        // }
+
+
+
     }
 
 
@@ -195,7 +379,6 @@ export function HirePurchaseAndLease(props) {
         }else{
             alert("View Report")
         }
-        
     }
 
 
@@ -203,7 +386,7 @@ export function HirePurchaseAndLease(props) {
         if(report == null){
             alert("Please generate the report first")
         }else{
-            alert("View Report")
+            alert("download Report")
         }
     }
 
