@@ -18,13 +18,12 @@ import {Spacer} from "../Spacer";
 // jsClass
 // TODO make it an import to this page
 class LeaseReport {
-    constructor (interest,principle,numberOfPayments,installmentAmmount,residual){
-        this.interst = interest;
+    constructor (annualInterestRate,principle,numberOfPayments,installmentAmmount,residual){
+        this.annualInterestRate = annualInterestRate;
         this.principle = principle;
         this.numberOfPayments = numberOfPayments;
         this.installmentAmmount = installmentAmmount;
         this.residual = residual;
-
         
     }
 
@@ -44,33 +43,31 @@ export function HirePurchaseAndLease(props) {
     const [report,setReport] = useState(null)
 
     // user inputs 
-    const INTEREST_INITVALUE = 10
-    const PRINCIPLE_INITVALUE = 50000
-    const NUMBEROFPAYMENTS_INITVALUE = 10
-    const INSTALLMENTAMMOUNT_INITVALUE = 5000
-    const RESIDUAL_INITVALUE = 0
+    const ANNUALINTERESTRATE_INITVALUE = 4.5
+    const PRINCIPLE_INITVALUE = 100000
+    const NUMBEROFPAYMENTS_INITVALUE = 60
+    const INSTALLMENTAMMOUNT_INITVALUE = 'xxxx'
+
 
     const [clientName,setClientName] = useState(null)
-    const [interest,setInterest] = useState(INTEREST_INITVALUE)
+    const [annualInterestRate,setAnnualInterestRate] = useState(ANNUALINTERESTRATE_INITVALUE)
     const [principle,setPrinciple] = useState(PRINCIPLE_INITVALUE)
     const [numberOfPayments,setNumberOfPayments] = useState(NUMBEROFPAYMENTS_INITVALUE)
     const [installmentAmmount,setInstallmentAmmount] = useState(INSTALLMENTAMMOUNT_INITVALUE)
-    const [residual,setResidual] = useState(RESIDUAL_INITVALUE)
+    const [paymentFrequencyVal,setPaymentFrequencyVal] = useState()
+    
 
 
     // Setup Radio Buttons
+        // setup form RB
     const HIREPURCHASE = 'HirePurchase'
     const LEASE = 'Lease'
     const [reportTypeRadioBtn,setReportTypeRadioButton] = useState(LEASE)
     
-
-    const PRINCIPLE = 'Principle'
-    const NUMBEROFPAYMENTS = 'NumberOfPaymets'
-    const INSTALLMENTAMMOUNT = 'InstallmentAmmount'
-    const RESIDUAL = 'Residual'
-    const [inputFieldRadioBtn,setInputFieldRadioButton] = useState(PRINCIPLE)
     
-    
+        // setup frequency string RB
+        // this is later converted to paymentFrequencyVal  
+            // (12 months per year) / (52 weeks per year) / etc
     const WEEKLY = 'Weekly'
     const FORTNIGHTLY = 'Fornightly'
     const MONTHLY = 'Monthly'
@@ -82,8 +79,91 @@ export function HirePurchaseAndLease(props) {
 
 
 
-    const calculateSelectedInput = () => { 
-        alert('calculate Selected input: ' + inputFieldRadioBtn)
+    // useEffect(()=> {
+        
+    // })[installmentAmmount]
+
+    const setPaymentFrequency = (frequency) => {
+        //first update rb views
+        setPaymentFrequencyRadioButton(frequency)
+
+        //then update paymentFrequencyVal
+            // their is a millisecond delay when value is set it here to not upset 
+            // calculating installment ammount somtimes the wait for to update required 
+            // user to click the calculate btn twice
+        switch(frequency){
+            case WEEKLY:
+                setPaymentFrequencyVal(52)
+                break; 
+            case FORTNIGHTLY:
+                setPaymentFrequencyVal(26)
+                break; 
+            case MONTHLY:
+                setPaymentFrequencyVal(12)
+                break; 
+            case QUARTERLY:
+                setPaymentFrequencyVal(4)
+                break; 
+            case HALFYEARLY:
+                setPaymentFrequencyVal(2)
+                break; 
+            case ANNUALLY:
+                setPaymentFrequencyVal(1)
+                break; 
+            default:
+                setPaymentFrequencyVal(12)
+        }
+    }
+
+
+    const calculateInstallmentAmmount = () => {
+        //alert('calculate Instalment ammount')
+        console.log("--- calc instalment ammount --")
+        console.log("principle: " + principle)
+        console.log("Annual Interest Rate: " + annualInterestRate)
+        console.log("numberOfPayments: " + numberOfPayments)
+        console.log("paymentFrequency RB: " + paymentFrequencyRadioBtn)
+
+        // Payment Frequency is always set due to it being a radio btn (monthly == default) 
+        if (principle == null ||
+            annualInterestRate == null ||
+            numberOfPayments == null){
+
+                alert("Please ensure all fields are filled in")
+
+        }else{
+            
+
+            console.log("paymentFrequencyVal: " + paymentFrequencyVal)
+
+
+            // REFERENCE 
+                // This next bit is a bit difficult but the expression you need is below
+                    // incrementsPerYear = 12
+                    // numYears = numPayments / incrementsPerYear
+                    //paymentAmmount = (principle * annualInterestRate/incrementsPerYear) / (1 - math.pow((1+ annualInterestRate/incrementsPerYear),(-1 * numPayments ))) 
+                    // print(paymentAmmount)
+            
+                    //to get 4.5 in form of percentage 0.045
+                    // let AIR = annualInterestRate/100  
+
+                    // https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Math
+                    // xxx.toFixed(2)
+            
+            // split in half to dignoise an issue
+            // let x = ((principle * (annualInterestRate / 100) )/ paymentFrequencyVal)
+            // let y = (1- Math.pow((1 + ((annualInterestRate / 100) / paymentFrequencyVal)),(-1 * numberOfPayments)))
+            // console.log("x: " + x)
+            // console.log("y: " + y)
+
+            
+            let num = ((principle * (annualInterestRate / 100) )/ paymentFrequencyVal) / (1- Math.pow((1 + ((annualInterestRate / 100) / paymentFrequencyVal)),(-1 * numberOfPayments)))
+            num = num.toFixed(2)  // 
+            setInstallmentAmmount( num )
+            console.log("installmentAmmount: " + installmentAmmount)
+        }
+
+
     }
 
 
@@ -92,17 +172,16 @@ export function HirePurchaseAndLease(props) {
 
         // ensure all required fields are filled in 
         if (principle == null ||
-            interest == null ||
+            annualInterestRate == null ||
             numberOfPayments == null ||
-            installmentAmmount == null ||
-            residual == null){
+            installmentAmmount == null){
 
                 alert('Please fill in all the required fields')
     
         }else{
             console.log('InputFields are filled')
 
-            const r = new LeaseReport(interest,principle,numberOfPayments,installmentAmmount,residual)
+            const r = new LeaseReport(annualInterestRate,principle,numberOfPayments,installmentAmmount,residual)
 
             console.log(r.getPrinciple())
 
@@ -154,6 +233,60 @@ export function HirePurchaseAndLease(props) {
 
 
 
+            {/* Payment Frequency */}
+            <View style={hplStyles.outerCont}>
+                <View style={hplStyles.innerCont}>
+                    <Text> Payment Frequency </Text>
+
+                    <View style={hplStyles.rbFrequencyCont}>
+                            <View style={hplStyles.rbFrequencyItem}>
+                                <TouchableOpacity onPress={() => setPaymentFrequency(WEEKLY)}>
+                                    <Text style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
+                                </TouchableOpacity>
+                                <Text> {WEEKLY} </Text>
+                            </View>
+                            <View style={hplStyles.rbFrequencyItem}>
+                                <TouchableOpacity onPress={() => setPaymentFrequency(FORTNIGHTLY)}>
+                                    <Text style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
+                                </TouchableOpacity>
+                                <Text> {FORTNIGHTLY} </Text>
+                            </View>
+                    </View>
+
+                    <View style={hplStyles.rbFrequencyCont}>
+                            <View style={hplStyles.rbFrequencyItem}>
+                                <TouchableOpacity onPress={() => setPaymentFrequency(MONTHLY)}>
+                                    <Text style={(paymentFrequencyRadioBtn == MONTHLY ) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
+                                </TouchableOpacity>
+                                <Text> {MONTHLY} </Text>
+                            </View>
+                            <View style={hplStyles.rbFrequencyItem}>
+                                <TouchableOpacity onPress={() => setPaymentFrequency(QUARTERLY)}>
+                                    <Text style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
+                                </TouchableOpacity>
+                                <Text> {QUARTERLY} </Text>
+                            </View>
+                    </View>
+
+                    <View style={hplStyles.rbFrequencyCont}>
+                            <View style={hplStyles.rbFrequencyItem}>
+                                <TouchableOpacity onPress={() => setPaymentFrequency(HALFYEARLY)}>
+                                    <Text style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
+                                </TouchableOpacity>
+                                <Text> {HALFYEARLY} </Text>
+                            </View>
+                            <View style={hplStyles.rbFrequencyItem}>
+                                <TouchableOpacity onPress={() => setPaymentFrequency(ANNUALLY)}>
+                                    <Text style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
+                                </TouchableOpacity>
+                                <Text> {ANNUALLY} </Text>
+                            </View>
+                    </View>
+                </View>
+            </View>
+
+
+
 
             {/* Input Fields  */}
             <View style={hplStyles.outerCont}>
@@ -171,79 +304,65 @@ export function HirePurchaseAndLease(props) {
                         <TextInput
                             onChangeText={ (val) => setClientName(val) }
                             style={hplStyles.inputField}
-                            placeholder="James"
                             keyboardType="default"
+                            placeholder="James"
                         />
                     </View>
 
-                    {/*1 Interest */}
+                    {/*1 annualInterestRate */}
                     <View style={hplStyles.input}>
                         <View style={hplStyles.inputContText}>
-                            <Text>Interest %:</Text>
+                            <Text>Annual Interest Rate %:</Text>
                         </View>
                         <TextInput
-                            onChangeText={ (val) => setInterest(val)}
+                            onChangeText={ (val) => setAnnualInterestRate(val)}
                             style={hplStyles.inputField}
                             keyboardType="numeric"
-                            value={INTEREST_INITVALUE.toString()}  //value has to initialized as a string
+                            placeholder={ANNUALINTERESTRATE_INITVALUE.toString()}
+                        />
+                    </View>
+
+                    {/*1 Principle */}
+                    <View style={hplStyles.input}>
+                        <View style={hplStyles.inputContTextn}>
+                            <Text>Principle:</Text>
+                        </View>
+                        <TextInput
+                            onChangeText={ (val) => setPrinciple(val) }
+                            style={hplStyles.inputField}
+                            keyboardType="numeric"
+                            placeholder={PRINCIPLE_INITVALUE.toString()}
+                        />
+                    </View>
+
+
+                    {/*1 numberOfPayments */}
+                    <View style={hplStyles.input}>
+                        <View style={hplStyles.inputContText}>
+                            <Text>Number of payments:</Text>
+                        </View>
+                        <TextInput
+                            onChangeText={ (val) => setNumberOfPayments(val) }
+                            style={hplStyles.inputField}
+                            keyboardType="numeric"
+                            placeholder={NUMBEROFPAYMENTS_INITVALUE.toString()}
                         />
                     </View>
 
                     <Spacer height={50}/>
 
-                    {/*2 Principle */}
+                    {/*1 installmentAmmount */}
                     <View style={hplStyles.input}>
-                        <View style={hplStyles.inputContTextAndRadioButton}>
-                            <Text>Principle:</Text>
-                            <TouchableOpacity onPress={() => setInputFieldRadioButton(PRINCIPLE)}>
-                                <Text style={(inputFieldRadioBtn == PRINCIPLE) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <TextInput
-                            onChangeText={ (val) => setPrinciple(val) }
-                            style={hplStyles.inputField}
-                            placeholder="50000"
-                            keyboardType="numeric"
-                            value={PRINCIPLE_INITVALUE.toString()}
-                        />
-                    </View>
-
-                    {/*2 numberOfPayments */}
-                    <View style={hplStyles.input}>
-                        <View style={hplStyles.inputContTextAndRadioButton}>
-                            <Text>Number of payments:</Text>
-                            <TouchableOpacity onPress={() => setInputFieldRadioButton(NUMBEROFPAYMENTS)}>
-                                <Text style={(inputFieldRadioBtn == NUMBEROFPAYMENTS) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <TextInput
-                            onChangeText={ (val) => setNumberOfPayments(val) }
-                            style={hplStyles.inputField}
-                            placeholder="10"
-                            keyboardType="numeric"
-                            value={NUMBEROFPAYMENTS_INITVALUE.toString()}
-                        />
-                    </View>
-
-                    {/*2 installmentAmmount */}
-                    <View style={hplStyles.input}>
-                        <View style={hplStyles.inputContTextAndRadioButton}>
+                        <View style={hplStyles.inputContText}>
                             <Text>Installment ammount:</Text>
-                            <TouchableOpacity onPress={() => setInputFieldRadioButton(INSTALLMENTAMMOUNT)}>
-                                <Text style={(inputFieldRadioBtn == INSTALLMENTAMMOUNT) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                            </TouchableOpacity>
                         </View>
-                        <TextInput
-                            onChangeText={ (val) => setInstallmentAmmount(val) }
-                            style={hplStyles.inputField}
-                            placeholder="5000"
-                            keyboardType="numeric"
-                            value={INSTALLMENTAMMOUNT_INITVALUE.toString()}
-                        />
+                        <View style={hplStyles.installmentAmmountCont}>
+                            <Text style={hplStyles.installmentAmmountContText}> { installmentAmmount } </Text>
+                        </View>
                     </View>
 
-                    {/*2 residual */}
-                    <View style={hplStyles.input}>
+                    {/* 2 residual */}
+                    {/* <View style={hplStyles.input}>
                         <View style={hplStyles.inputContTextAndRadioButton}>
                             <Text>Residual:</Text>
                             <TouchableOpacity onPress={() => setInputFieldRadioButton(RESIDUAL)}>
@@ -257,12 +376,13 @@ export function HirePurchaseAndLease(props) {
                             keyboardType="numeric"
                             value={RESIDUAL_INITVALUE.toString()}
                         />
-                    </View>
+                    </View> */}
 
 
-                    <TouchableOpacity style={hplStyles.calculateSelectedInputBtn} onPress={() => calculateSelectedInput()}>
-                        <Text style={hplStyles.calculateSelectedInputBtnText}> Calculate Selected Input </Text>
+                    <TouchableOpacity style={hplStyles.calculateInstallmentAmmountInputBtn} onPress={() => calculateInstallmentAmmount()}>
+                        <Text style={hplStyles.calculateInstallmentAmmountInputBtnText}> Calculate Installment Ammount </Text>
                     </TouchableOpacity>
+
                 </View>
             </View>
 
@@ -270,57 +390,7 @@ export function HirePurchaseAndLease(props) {
 
 
 
-            {/* Payment Frequency */}
-            <View style={hplStyles.outerCont}>
-                <View style={hplStyles.innerCont}>
-                    <Text> Payment Frequency </Text>
-
-                    <View style={hplStyles.rbFrequencyCont}>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(WEEKLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {WEEKLY} </Text>
-                            </View>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(FORTNIGHTLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {FORTNIGHTLY} </Text>
-                            </View>
-                    </View>
-
-                    <View style={hplStyles.rbFrequencyCont}>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(MONTHLY )}>
-                                    <Text style={(paymentFrequencyRadioBtn == MONTHLY ) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {MONTHLY} </Text>
-                            </View>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(QUARTERLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {QUARTERLY} </Text>
-                            </View>
-                    </View>
-
-                    <View style={hplStyles.rbFrequencyCont}>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(HALFYEARLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {HALFYEARLY} </Text>
-                            </View>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequencyRadioButton(ANNUALLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {ANNUALLY} </Text>
-                            </View>
-                    </View>
-                </View>
-            </View>
+            
 
 
 
@@ -475,7 +545,23 @@ const hplStyles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    calculateSelectedInputBtn:{
+    installmentAmmountCont:{
+        backgroundColor: '#d6d6d6',
+        width: '100%',
+
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    installmentAmmountContText:{
+        color: '#000',
+        marginVertical: 5,
+    },
+
+
+
+    calculateInstallmentAmmountInputBtn:{
         marginVertical: 5,
         backgroundColor: 'grey',
         borderRadius: 5,
@@ -487,7 +573,7 @@ const hplStyles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    calculateSelectedInputBtnText:{
+    calculateInstallmentAmmountInputBtnText:{
         color: '#e8e8e8'
     },
 
