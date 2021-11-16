@@ -8,19 +8,79 @@ import {Spacer} from "../Spacer";
 
 
 
-class LeaseReport {
-    constructor (clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal){
+class Report {
+    constructor (reportTypeStr,clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyStr,paymentFrequencyVal,columnArray ,rowArray){
+        this.reportTypeStr = reportTypeStr
         this.clientName = clientName
         this.principle = principle;
         this.annualInterestRate = annualInterestRate;
         this.numberOfPayments = numberOfPayments;
         this.installmentAmmount = installmentAmmount;
-        this.paymentFrequencyRadioBtn = paymentFrequencyRadioBtn;
-        this.paymentFrequencyVal = paymentFrequencyVal;
+        this.paymentFrequencyStr = paymentFrequencyStr;
+        this.paymentFrequencyVal = paymentFrequencyVal
+        this.columnArray = columnArray;
+        this.rowArray = rowArray;
 
-        this.accountBalance = installmentAmmount * numberOfPayments
-        this.interestOwing = (installmentAmmount * numberOfPayments) - principle
-         
+        this.totalAccountBalance = installmentAmmount * numberOfPayments
+        this.totalInterestOwing = (installmentAmmount * numberOfPayments) - principle
+ 
+    }
+
+    //Methods ----------------
+
+    logToConsole(){
+
+        // log init data 
+        console.log('---------HEADER Data----------------------')
+        console.log('Report type: ' + this.reportTypeStr)
+        console.log('ClientName:' + this.clientName)
+        console.log('principle: ' + this.principle)
+        console.log('Annual Interest Rate: ' + this.annualInterestRate)
+        console.log('Installment Ammount: ' + this.installmentAmmount)
+        console.log('frequency: ' + this.paymentFrequencyStr)
+        console.log("frequencyVal: " + this.paymentFrequencyVal)
+        console.log('Total Account balance: ' + this.totalAccountBalance)
+        console.log('Total Interest Owing: ' + this.totalInterestOwing)
+        console.log("Interest Method: Acturarial Method")
+        console.log('------------------------------------')
+
+        console.log('---------Table Data----------------------')
+        // log column names
+        let strColumns = ''
+        this.columnArray.forEach(e => {
+            strColumns = strColumns + e + "  "
+        });
+        console.log(strColumns)
+
+        // print rows
+        let r = 0
+        let year = 1
+        this.rowArray.forEach(row => {
+
+            // read row
+            let strRow = ''
+            row.forEach(e => {
+                strRow = strRow + e.toString() + "  "
+            });
+            console.log(strRow)
+
+            //if incremnt modulous , End year stmt with stats
+            if(r%12 == 0){
+                // console.log("Year: " + year + " / itemRow: " + r)
+                console.log("====================================================================================")
+                console.log("Year: " + year +" / IncrementNum: " + this.paymentFrequencyVal + " / PrinciplePaid: " + this.rowArray[r][7] + " / InterestPaid: " + this.rowArray[r][3])
+                console.log("====================================================================================")
+                year++
+            }
+            r++
+        })
+
+    }
+
+    //Getters ----------------
+
+    getReportTypeStr(){
+        return this.reportTypeStr
     }
 
     getClientName(){
@@ -38,31 +98,21 @@ class LeaseReport {
     getNumberOfPayments(){
         return this.numberOfPayments
     }
-    
+
     getInstallmentAmmount(){
         return this.installmentAmmount
     }
 
-    getPaymentFrequencyRadioBtn(){
-        return this.paymentFrequencyRadioBtn
+    getPaymentFrequencyStr(){
+        return this.paymentFrequencyStr
     }
 
-    getPaymentFrequencyVal(){
-        return this.paymentFrequencyVal
+    getTotalAccountBalance(){
+        return this.totalAccountBalance
     }
 
-    getInterestOwing(){
-        return this.interestOwing
-    }
-
-    getAccountBalance(){
-        return this.accountBalance
-    }
-
-
-
-    incrementToArray(arr){
-        
+    getTotalIntersetOwing(){
+        return this.totalInterestOwing
     }
 
 
@@ -202,14 +252,12 @@ export function HirePurchaseAndLease(props) {
             num = num.toFixed(2)
             setInstallmentAmmount( num )
             console.log("installmentAmmount: " + installmentAmmount)
+
         }
-
-
     }
 
 
     const generateReport = () => { 
-        console.log('report generation started')
 
         // ensure all required fields are filled in 
         if (principle == null ||
@@ -221,8 +269,7 @@ export function HirePurchaseAndLease(props) {
             return
         }
 
-
-        //recalculate installment amount and ensure it is the same
+        //recalculate installment amount and ensure it is based off of the same input data 
         let num = ((principle * (annualInterestRate / 100) )/ paymentFrequencyVal) / (1- Math.pow((1 + ((annualInterestRate / 100) / paymentFrequencyVal)),(-1 * numberOfPayments)))
         num = num.toFixed(2)  
     
@@ -231,11 +278,7 @@ export function HirePurchaseAndLease(props) {
             return
         }
 
-        // Beign Generation
-        console.log("--- Generate report ---")
-        // const report = new LeaseReport(clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal)
-        // console.log(report.getPrinciple())
-        
+        // Begin Generation
         //Our Column Names
         let incrementArrColumnNames = ["Installment number",
                       "Principle Component",
@@ -246,9 +289,6 @@ export function HirePurchaseAndLease(props) {
                       "AccountBalance",
                       "Cumulative Principle"]
 
-        
-        
-        
         
         // initial setup
             //Arrays  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
@@ -268,14 +308,9 @@ export function HirePurchaseAndLease(props) {
         let decimalPlaces = 2
         let i = 1
         while(i <= numberOfPayments){
-            //set secondarys
+            //set secondarys (changes here reflect in the main columns for each row)
             let currentInterestComp = (principleOutstanding * (annualInterestRate / 100)) / paymentFrequencyVal
             let currentPrincipleComponent = installmentAmmount - currentInterestComp
-            
-            // convert secondary vars to 2 decimal places
-            // currentInterestComp = currentInterestComp.toFixed(2)
-            // currentPrincipleComponent = currentPrincipleComponent.toFixed(2)
-
 
             //increment the mains
                 //NOTE -= AND =+ dont work here being javascript apparently
@@ -284,16 +319,6 @@ export function HirePurchaseAndLease(props) {
             interestOwing = interestOwing - currentInterestComp
             principleOutstanding = principleOutstanding - currentPrincipleComponent
             accountBalance = accountBalance - installmentAmmount
-
-            // convert main vars to 2 decimal places   num = num.toFixed(2) 
-            // console.log(typeof cumulativePrinciple)
-            // console.log(cumulativePrinciple.toFixed(2))
-            // let x = cumulativePrinciple.toFixed(2)
-            // console.log(x)
-            // cumulativeInterest = cumulativeInterest.toFixed(2)
-            // interestOwing = interestOwing.toFixed(2)
-            // principleOutstanding = principleOutstanding.toFixed(2)
-            // accountBalance = accountBalance.toFixed(2)
         
             // create row
             let activeRow = [i,
@@ -314,60 +339,12 @@ export function HirePurchaseAndLease(props) {
             //Repeat
             i = i+1
         }
-        
-        // log init data 
-        console.log('---------HEADER----------------------')
-        console.log("Generation complete - log")
-        console.log('ClientName:' + clientName)
-        console.log('principle: ' + principle)
-        console.log('Annual Interest Rate: ' + annualInterestRate)
-        console.log('Installment Ammount: ' + installmentAmmount)
-        console.log('frequency: ' + paymentFrequencyRadioBtn)
-        console.log('frequencyVal: ' + paymentFrequencyVal)
-        console.log('------------------------------------')
 
+        // create Report object
+        let report = new Report("Hire Purchase",clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal,incrementArrColumnNames,incrementArr)
 
-        console.log('---------Data----------------------')
-        // log column names
-        let strColumns = ''
-        incrementArrColumnNames.forEach(e => {
-            strColumns = strColumns + e + "  "
-        });
-        console.log(strColumns)
-
-        // // print rows
-        incrementArr.forEach(row => {
-            let strRow = ''
-            row.forEach(e => {
-                strRow = strRow + e.toString() + "  "
-            });
-            console.log(strRow)
-        })
-
-        //printRows v2 show year vals
-        // let year = 1
-        // let strRow = ''
-        // let r = 3
-        // while(r < incrementArr.length){
-            
-        //     //read row
-        //     // incrementArr[r].forEach(e => {
-        //     //     strRow = strRow + e.toString() + "  "
-        //     // });
-        //     incrementArr[r].forEach(e => {
-        //         strRow = strRow + e.toString() + "  "
-        //         console.log(strRow.slice(0,99))
-        //     })
-            
-        //     // //if year modulous 0, End year stmt with stats
-        //     // if(paymentFrequencyVal%i == 0){
-        //     //     console.log("Year: " + year + " / PrinciplePaid: " + incrementArr[i][7] + " / InterestPaid: " + incrementArr[i][3])
-        //     //     year = year + 1
-        //     // }
-            
-        //     r++
-        // }
-
+        //set report to useState()
+        setReport(report)
 
 
     }
@@ -388,6 +365,23 @@ export function HirePurchaseAndLease(props) {
         }else{
             alert("download Report")
         }
+    }
+
+    const ShowLogReportBtn = (props) =>{
+        if(props.bool){
+            return(
+            <TouchableOpacity style={(report == null) ? hplStyles.btnDisabled : hplStyles.btn} onPress={() => logReport()}>
+                <Text style={hplStyles.btnText}> log Report </Text>
+            </TouchableOpacity>
+            )
+        }else{
+            return(null)
+        }
+    }
+
+    const logReport = () => {
+        // alert("logReport")
+        report.logToConsole()
     }
 
 
@@ -572,17 +566,11 @@ export function HirePurchaseAndLease(props) {
 
 
 
-
-            
-
-
-
-
             {/* Generate Report */}
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
-                    <TouchableOpacity style={hplStyles.Btn} onPress={() => generateReport()}>
-                        <Text style={hplStyles.BtnText}> Generate Report </Text>
+                    <TouchableOpacity style={hplStyles.btn} onPress={() => generateReport()}>
+                        <Text style={hplStyles.btnText}> Generate Report </Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -593,11 +581,12 @@ export function HirePurchaseAndLease(props) {
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
                     <TouchableOpacity style={(report == null) ? hplStyles.btnDisabled : hplStyles.btn} onPress={() => viewReport()}>
-                        <Text style={hplStyles.BtnText}> View Report </Text>
+                        <Text style={hplStyles.btnText}> View Report </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={(report == null) ? hplStyles.btnDisabled : hplStyles.btn} onPress={() => downloadReport()}>
-                        <Text style={hplStyles.BtnText}> Download Report </Text>
+                        <Text style={hplStyles.btnText}> Download Report </Text>
                     </TouchableOpacity>
+                    <ShowLogReportBtn bool={true}/>
                 </View>
             </View>
 
@@ -702,7 +691,7 @@ const hplStyles = StyleSheet.create({
 
     // Buttons
 
-    Btn:{
+    btn:{
         marginVertical: 5,
         backgroundColor: 'grey',
         borderRadius: 5,
@@ -713,7 +702,7 @@ const hplStyles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    BtnText:{
+    btnText:{
         color: '#e8e8e8'
     },
 
