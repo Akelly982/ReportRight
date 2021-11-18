@@ -6,7 +6,8 @@ import {Spacer} from "../Spacer";
 // import { LeaseReport } from '../jsClass/LeaseReport';
 
 
-
+// =======================================================
+// ======== Report Class =================================
 
 class Report {
     constructor (reportTypeStr,clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyStr,paymentFrequencyVal,columnArray ,rowArray){
@@ -26,7 +27,7 @@ class Report {
  
     }
 
-    //Methods ----------------
+    //Class Methods ----------------
 
     logToConsole(){
 
@@ -53,6 +54,7 @@ class Report {
         console.log(strColumns)
 
         // print rows
+            //installmenst start with increment 1 and array index 0
         let r = 0
         let year = 1
         this.rowArray.forEach(row => {
@@ -65,13 +67,15 @@ class Report {
             console.log(strRow)
 
             //if incremnt modulous , End year stmt with stats
-            if(r%12 == 0){
+                //r+1 accounts for array index start from 0
+            if((r+1)%this.paymentFrequencyVal == 0 && r!=0){
                 // console.log("Year: " + year + " / itemRow: " + r)
                 console.log("====================================================================================")
-                console.log("Year: " + year +" / IncrementNum: " + this.paymentFrequencyVal + " / PrinciplePaid: " + this.rowArray[r][7] + " / InterestPaid: " + this.rowArray[r][3])
+                console.log("Year: " + year +" / IncrementNum: " + (r+1)+ " / PrinciplePaid: " + this.rowArray[r][7] + " / InterestPaid: " + this.rowArray[r][3])
                 console.log("====================================================================================")
                 year++
             }
+            // console.log("r: "+r)
             r++
         })
 
@@ -119,15 +123,15 @@ class Report {
 }
 
 
-
-
-// -------------------------------------------------------------------
-// -------------------------------------------------------------------
+// ===================================================
+// ======== Page data ================================
 
 
 export function HirePurchaseAndLease(props) {
     const navigation = useNavigation()
-    
+
+    // debug log report btn
+    const LOGREPORTBTN = true
 
     // report
     const [report,setReport] = useState(null)
@@ -146,13 +150,11 @@ export function HirePurchaseAndLease(props) {
     const [installmentAmmount,setInstallmentAmmount] = useState(INSTALLMENTAMMOUNT_INITVALUE)
     const [paymentFrequencyVal,setPaymentFrequencyVal] = useState(PAYMENTFREQUENCYVAL_INITVALUE)
     
-
-
     // Setup Radio Buttons
         // setup form RB
-    const HIREPURCHASE = 'HirePurchase'
+    const HIREPURCHASE = 'Hire Purchase'
     const LEASE = 'Lease'
-    const [reportTypeRadioBtn,setReportTypeRadioButton] = useState(LEASE)
+    const [reportTypeRadioBtn,setReportTypeRadioButton] = useState(HIREPURCHASE)
     
     
         // setup frequency string RB
@@ -167,12 +169,9 @@ export function HirePurchaseAndLease(props) {
 
     const [paymentFrequencyRadioBtn,setPaymentFrequencyRadioButton] = useState(MONTHLY)
 
+// =====================================================
+// =====================================================
 
-
-
-    // useEffect(()=> {
-        
-    // })[installmentAmmount]
 
     const setPaymentFrequency = (frequency) => {
         //first update rb views
@@ -248,7 +247,6 @@ export function HirePurchaseAndLease(props) {
 
             
             let num = ((principle * (annualInterestRate / 100) )/ paymentFrequencyVal) / (1- Math.pow((1 + ((annualInterestRate / 100) / paymentFrequencyVal)),(-1 * numberOfPayments)))
-            console.log(typeof num)
             num = num.toFixed(2)
             setInstallmentAmmount( num )
             console.log("installmentAmmount: " + installmentAmmount)
@@ -278,8 +276,7 @@ export function HirePurchaseAndLease(props) {
             return
         }
 
-        // Begin Generation
-        //Our Column Names
+        //Columns names remain the same between reports so generate first
         let incrementArrColumnNames = ["Installment number",
                       "Principle Component",
                       "Interest Component",
@@ -289,7 +286,18 @@ export function HirePurchaseAndLease(props) {
                       "AccountBalance",
                       "Cumulative Principle"]
 
-        
+        //Genereate report based on type HP or LEASE
+            //if not Hire Purchase it is Lease
+        if (reportTypeRadioBtn == HIREPURCHASE){
+            let akTest = "aktest"
+            generateHirePurchaseReport(incrementArrColumnNames)
+        }else{
+            alert("lease report type not ready for generation yet sorry")
+        }
+    }
+
+    const generateHirePurchaseReport = (arrColumnNames) => {
+
         // initial setup
             //Arrays  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
         let incrementArr = []   //blank array to hold rows
@@ -341,7 +349,7 @@ export function HirePurchaseAndLease(props) {
         }
 
         // create Report object
-        let report = new Report("Hire Purchase",clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal,incrementArrColumnNames,incrementArr)
+        let report = new Report(reportTypeRadioBtn,clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal,arrColumnNames,incrementArr)
 
         //set report to useState()
         setReport(report)
@@ -350,14 +358,17 @@ export function HirePurchaseAndLease(props) {
     }
 
 
+
+    // ===========================================================
+    // ============= report btns =================================
+
     const viewReport = () => { 
         if(report == null){
             alert("Please generate the report first")
         }else{
-            alert("View Report")
+            navigation.navigate('HpReportWebView') //name from corresponding app.js stack.screen element
         }
     }
-
 
     const downloadReport = () => { 
         if(report == null){
@@ -366,6 +377,12 @@ export function HirePurchaseAndLease(props) {
             alert("download Report")
         }
     }
+
+    const logReport = () => {
+        // alert("logReport")
+        report.logToConsole()
+    }
+
 
     const ShowLogReportBtn = (props) =>{
         if(props.bool){
@@ -379,11 +396,9 @@ export function HirePurchaseAndLease(props) {
         }
     }
 
-    const logReport = () => {
-        // alert("logReport")
-        report.logToConsole()
-    }
 
+    // =====================================================
+    // =====================================================
 
     return (
         <ScrollView style={hplStyles.container}>
@@ -392,18 +407,20 @@ export function HirePurchaseAndLease(props) {
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
                     <View style={hplStyles.rbReportCont}>
-                            <View style={hplStyles.rbReportItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(HIREPURCHASE)}>
-                                    <Text style={(reportTypeRadioBtn == HIREPURCHASE) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
+                            <TouchableOpacity style={hplStyles.rbReportItem} onPress={() => setReportTypeRadioButton(HIREPURCHASE)}>
+                                <View style={hplStyles.inputFieldRadioButton}>
+                                    <View style={(reportTypeRadioBtn == HIREPURCHASE) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                </View>
                                 <Text> Hire Purchase </Text>
-                            </View>
-                            <View style={hplStyles.rbReportItem}>
-                                <TouchableOpacity onPress={() => setReportTypeRadioButton(LEASE)}>
-                                    <Text style={(reportTypeRadioBtn == LEASE) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
+                            </TouchableOpacity>
+                            {/* onPress={() => setReportTypeRadioButton(LEASE)     <-- put in place when Lease Report is ready */}
+                            <TouchableOpacity style={hplStyles.rbReportItem} onPress={() => alert("Lease Report type is not ready sorry..")}>
+                                <View style={hplStyles.inputFieldRadioButton}>
+                                    <Text style={(reportTypeRadioBtn == LEASE) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                </View>
                                 <Text> Lease </Text>
-                            </View>
+                            </TouchableOpacity>
+
                     </View>
                 </View>
             </View>
@@ -415,49 +432,50 @@ export function HirePurchaseAndLease(props) {
                 <View style={hplStyles.innerCont}>
                     <Text> Payment Frequency </Text>
 
+                    {/* Row 1 */}
                     <View style={hplStyles.rbFrequencyCont}>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequency(WEEKLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {WEEKLY} </Text>
+                        <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(WEEKLY)}>
+                            <View style={hplStyles.inputFieldRadioButton}>
+                                <Text style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequency(FORTNIGHTLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {FORTNIGHTLY} </Text>
+                            <Text> {WEEKLY} </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(FORTNIGHTLY)}>
+                        <View style={hplStyles.inputFieldRadioButton}>
+                                <Text style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
+                            <Text> {FORTNIGHTLY} </Text>
+                        </TouchableOpacity>
                     </View>
-
+                    {/* Row 2 */}
                     <View style={hplStyles.rbFrequencyCont}>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequency(MONTHLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == MONTHLY ) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {MONTHLY} </Text>
+                        <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(MONTHLY)}>
+                        <View style={hplStyles.inputFieldRadioButton}>
+                                <Text style={(paymentFrequencyRadioBtn == MONTHLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequency(QUARTERLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {QUARTERLY} </Text>
+                            <Text> {MONTHLY} </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(QUARTERLY)}>
+                        <View style={hplStyles.inputFieldRadioButton}>
+                                <Text style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
+                            <Text> {QUARTERLY} </Text>
+                        </TouchableOpacity>
                     </View>
-
+                    {/* Row 3 */}
                     <View style={hplStyles.rbFrequencyCont}>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequency(HALFYEARLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {HALFYEARLY} </Text>
+                        <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(HALFYEARLY)}>
+                        <View style={hplStyles.inputFieldRadioButton}>
+                                <Text style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
-                            <View style={hplStyles.rbFrequencyItem}>
-                                <TouchableOpacity onPress={() => setPaymentFrequency(ANNUALLY)}>
-                                    <Text style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : hplStyles.inputFieldRadioButton }> x </Text>
-                                </TouchableOpacity>
-                                <Text> {ANNUALLY} </Text>
+                            <Text> {HALFYEARLY} </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(ANNUALLY)}>
+                        <View style={hplStyles.inputFieldRadioButton}>
+                                <Text style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
+                            <Text> {ANNUALLY} </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -586,7 +604,7 @@ export function HirePurchaseAndLease(props) {
                     <TouchableOpacity style={(report == null) ? hplStyles.btnDisabled : hplStyles.btn} onPress={() => downloadReport()}>
                         <Text style={hplStyles.btnText}> Download Report </Text>
                     </TouchableOpacity>
-                    <ShowLogReportBtn bool={true}/>
+                    <ShowLogReportBtn bool={LOGREPORTBTN}/>
                 </View>
             </View>
 
@@ -599,10 +617,9 @@ export function HirePurchaseAndLease(props) {
 
 
 
-
-// ------------------------------------------------------------
-// -------- STYLES --------------------------------------------
-
+// =====================================================
+// -------- STYLES ------------------------------------- 
+// =====================================================
 
 const hplStyles = StyleSheet.create({
     container: {
@@ -631,11 +648,14 @@ const hplStyles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
+        
     },
 
     rbReportItem:{
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
 
@@ -653,13 +673,21 @@ const hplStyles = StyleSheet.create({
     },
 
     inputFieldRadioButton:{
-        fontSize: 15,
-        color: '#3b3b3b',
+        backgroundColor: '#fff',
+        borderRadius: 100,
+        width: 25,
+        height: 25,
+
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     inputFieldRadioButton_Active:{
-        fontSize: 15,
-        color: 'red',
+        backgroundColor: 'red',
+        borderRadius: 100,
+        width: 15,
+        height: 15,
     },
 
     inputLabel:{
@@ -686,6 +714,8 @@ const hplStyles = StyleSheet.create({
     rbFrequencyItem:{
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
 

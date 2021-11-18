@@ -36,7 +36,6 @@ export function Home(props) {
 
     const renderItem = ({item}) => {
 
-        
         const itemLongPress = () => {
             alert("long press: " + item.id)
         }
