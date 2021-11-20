@@ -1,5 +1,5 @@
 import React, { Component,useState,useEffect } from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import { BackHandler, StyleSheet, Text, View} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Home } from "./components/pages/Home";
@@ -16,30 +16,37 @@ export default function App() {
 
   const [reportStr,setReportStr] = useState(null)
 
+
+
+  const handleReportStr = (val) => {
+      setReportStr(val)
+  }
+
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HpReportWebView">
+      <Stack.Navigator initialRouteName="Home">
 
         {/* <Stack.Screen name="HomeLinear" options={{title: "HomeTitle type 1"}} component={HomeLinear}/> */}
 
         <Stack.Screen name="Home" options={{title: "Report Right"}}>
-            {(props) => <Home {...props} x={" @_@ Hello from appjs I dont acturaly use this  "} />}
+            {(props) => <Home {...props} x={" @_@ Hello from appjs I dont acturaly use this "} />}
         </Stack.Screen>
 
 
         {/* Calculations pages */}
         {/* These pages dont recieve passed data so used simplified version of setup */}
 
-        {/* HpAndLeaseCalculation */}
-        {/* <Stack.Screen name="HirePurchaseAndLease" options={{title: "Hire Purchase And Lease"}} component={HirePurchaseAndLease}/> */}
-        <Stack.Screen name="HirePurchaseAndLease" options={{title: "Hire Purchase And Lease"}}>
-            {(props) => <HirePurchaseAndLease {...props} reportString={" @_@ Hello from appjs I dont acturaly use this  "} />}
-        </Stack.Screen>
+          {/* HpAndLeaseCalculation */}
+          {/* <Stack.Screen name="HirePurchaseAndLease" options={{title: "Hire Purchase And Lease"}} component={HirePurchaseAndLease}/> */}
+          <Stack.Screen name="HirePurchaseAndLease" options={{title: "Hire Purchase And Lease"}}>
+              {(props) => <HirePurchaseAndLease {...props} reportStr={reportStr} handleReportStr={handleReportStr}/>}
+          </Stack.Screen>
 
-        {/* HpAndLeaseCalculation - hpReportWebView*/}
-        <Stack.Screen name="HpReportWebView" options={{title: "Hire Purchase Report"}}>
-            {(props) => <HpReportWebView {...props} reportString={" @_@ Hello from appjs I dont acturaly use this  "} />}
-        </Stack.Screen>
+          {/* HpAndLeaseCalculation - hpReportWebView*/}
+          <Stack.Screen name="HpReportWebView" options={{title: "Hire Purchase Report"}}>
+              {(props) => <HpReportWebView {...props} reportStr={reportStr} />}
+          </Stack.Screen>
 
 
       </Stack.Navigator>

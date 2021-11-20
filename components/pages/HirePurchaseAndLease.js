@@ -24,7 +24,8 @@ class Report {
 
         this.totalAccountBalance = installmentAmmount * numberOfPayments
         this.totalInterestOwing = (installmentAmmount * numberOfPayments) - principle
- 
+
+        this.reportStr = null;
     }
 
     //Class Methods ----------------
@@ -33,10 +34,13 @@ class Report {
 
         // log init data 
         console.log('---------HEADER Data----------------------')
+        console.log('reportStr: ' + this.reportTypeStr)
+        console.log('-------------------')
         console.log('Report type: ' + this.reportTypeStr)
         console.log('ClientName:' + this.clientName)
         console.log('principle: ' + this.principle)
         console.log('Annual Interest Rate: ' + this.annualInterestRate)
+        console.log('number of payments: ' + this.numberOfPayments)
         console.log('Installment Ammount: ' + this.installmentAmmount)
         console.log('frequency: ' + this.paymentFrequencyStr)
         console.log("frequencyVal: " + this.paymentFrequencyVal)
@@ -71,7 +75,7 @@ class Report {
             if((r+1)%this.paymentFrequencyVal == 0 && r!=0){
                 // console.log("Year: " + year + " / itemRow: " + r)
                 console.log("====================================================================================")
-                console.log("Year: " + year +" / IncrementNum: " + (r+1)+ " / PrinciplePaid: " + this.rowArray[r][7] + " / InterestPaid: " + this.rowArray[r][3])
+                console.log("Year: " + year +" / IncrementNum: " + (r+1)+ " / PrinciplePaid: " + this.rowArray[r][4] + " / InterestPaid: " + this.rowArray[r][3])
                 console.log("====================================================================================")
                 year++
             }
@@ -79,6 +83,195 @@ class Report {
             r++
         })
 
+        // adjustment / residual
+        console.log("adjustment / residual") 
+        console.log ("Principle: " + (this.rowArray[this.numberOfPayments -1][4] - this.principle).toFixed(2))
+        console.log ("Interest Owing: " + (this.rowArray[this.numberOfPayments -1][3] - this.totalInterestOwing).toFixed(2))
+        // final figures
+        console.log("total paid") 
+        console.log (this.principle)
+        console.log (this.totalInterestOwing)
+    }
+
+
+
+
+    // genereate Report string
+    createReportString(){
+        // create all elements
+        //let str = '<!doctype html> <html lang="en"> <body> <div class="mainContainer"> <div class="reportContainer"> <div class="title"> <h3>Report Type:<h3> <h3>Testing Report string handleing</h3> </div> <div class="Client"> <div class="textAndVar"> <p>Client Name: </p> <p> jimmy </p> </div> <div class="spacer"> <p> ------------------------------- </p> </div> </div> <div class="headerData"> <div class="textAndVar"> <p>Principle: </p> <p> xxxxx </p> </div> <div class="textAndVar"> <p>Annual Interest rate: </p> <p> xxxxx </p> </div> <div class="textAndVar"> <p> rrr: </p> <p> xxxxx </p> </div> <div class="textAndVar"> <p>Principle: </p> <p> xxxxx </p> </div> <div class="textAndVar"> <p>Principle: </p> <p> xxxxx </p> </div> </div> <div class="spacer"> <p> ------------------------------- </p> </div> <div class="tableData"> <div class="row" id="rowName"> <p class="rowItem"> Increment </p> <p class="rowItem"> somthing else </p> <p class="rowItem"> somthing else </p> <p class="rowItem"> somthing else </p> <p class="rowItem"> somthing else </p> <p class="rowItem"> somthing else </p> <p class="rowItem"> somthing else </p> </div> <div class="row"> <p class="rowItem"> 1 </p> <p class="rowItem"> 1324432143 </p> <p class="rowItem"> 31241324132 </p> <p class="rowItem"> 100000.12 </p> <p class="rowItem"> 31423512341 </p> <p class="rowItem"> 123 </p> <p class="rowItem"> 9999 </p> </div> <div class="row"> <p class="rowItem"> 2 </p> <p class="rowItem"> 1324432143 </p> <p class="rowItem"> 3 </p> <p class="rowItem"> 100000.12 </p> <p class="rowItem"> 31423512341 </p> <p class="rowItem"> 12345678910 </p> <p class="rowItem"> 9999 </p> </div> <div class="row"> <p class="rowItem"> 3 </p> <p class="rowItem"> 1324432143 </p> <p class="rowItem"> 34132 </p> <p class="rowItem"> 100000.12 </p> <p class="rowItem"> 31423512341 </p> <p class="rowItem"> 12345678910 </p> <p class="rowItem"> 9999 </p> </div><div class="spacer"> <p> ---- ------------------------------------ </p> </div> <div class="tableDataInsert"> <div class="textAndVar"> <p> Year: </p> <p> 1 </p> </div> <div class="varLeft"> <p> 16000.65 </p> </div> <div class="varLeft"> <p> 11000.12 </p> </div> </div> <div class="spacer"> <p> ---- ------------------------------------ </p> </div> <div class="row"> <p class="rowItem"> 4 </p> <p class="rowItem"> 1324432143 </p> <p class="rowItem"> 31241324132 </p> <p class="rowItem"> 100000.12 </p> <p class="rowItem"> 31423512341 </p> <p class="rowItem"> 12345678910 </p> <p class="rowItem"> 9999 </p> </div> <div class="tableDataInsert"> <div class="itemCenter"> <p> Adjustment: </p> </div> <div class="itemLeft"> <p> 0.57 </p> </div> <div class="itemLeft"> <p> -0.57 </p> </div> </div> <div class="tableDataInsert"> <div class="itemCenter"> <p> Totals: </p> </div> <div class="itemLeft"> <p> 120000 </p> </div> <div class="itemLeft"> <p> 18000 </p> </div> </div> </div> </div> </div> </body> </html> <style> :root { --ReportColor: #fff; --ReportEdge: lightblue; --textColor: #3b3b3b; }p{ color: var(--textColor); } h3{ color: var(--textColor); } .mainContainer{ background-color: var(--ReportEdge); padding:25px; width: 925px; display: flex; justify-content: center; } .reportContainer{ background-color: var(--ReportColor); /* 875 px is the width of the grid it has fixed width partially because i want it to*/ /* be zoomable on the mobile devices */ width: 875px; padding: 20px; display: flex; flex-direction: column; }.title{ display: flex; flex-direction: row; justify-content: center; align-items: center; } .title h3{ padding-left: 5px; padding-right: 5px; } .spacer{ height: 30px; display: flex; justify-content: center; align-items: center; } .headerData{ width: 100%; display: grid; grid-template-columns: auto auto auto; } .textAndVar{ display: flex; flex-direction: row; align-items: center; justify-content: center; } .textAndVar p{ padding-left: 10px; padding-right: 10px; } /* ======== TABLE DATA ============ */ /* ================================ */ .tableData{ width: 100%; } .row{ display: grid; grid-template-columns: 125px 125px 125px 125px 125px 125px 125px; /* grid-template-columns: auto auto auto auto auto auto auto; */ } .rowItem{ display:flex; justify-content: center; align-items: center; } .tableDataInsert{ display: grid; grid-template-columns: 150px 125px 125px 125px 125px 125px 125px; } .tableEndText{ display: flex; flex-direction: column; justify-content: center; align-items: center; } .itemCenter{ display: flex; flex-direction: column; align-items: center; justify-content: center; } .itemLeft { display: flex; flex-direction: column; } </style>'
+        
+
+        //initialize a string to build appon
+        let str = ""
+        
+        //Html header
+        let htmlHeader = '<!doctype html> <html lang="en"> <body> <div class="mainContainer"> <div class="reportContainer">'
+        // report title
+        let title = '<div class="title"> <h3>Report Type:<h3> <h3>' + this.reportTypeStr  + '</h3> </div>'
+        
+        //str append
+        str = str + htmlHeader;
+        str = str + title;
+
+        //client name
+        if(this.clientName != null){
+            let clientStr = '<div class="Client"> <div class="textAndVar"> <p>Client Name: </p> <p> '+ this.clientName +' </p> </div> <div class="spacer"> <p> ------------------------------- </p> </div> </div>'
+            str = str + clientStr
+        }
+
+
+        // doc header data 
+        // all these need to be in the doc header
+        // console.log('principle: ' + this.principle)
+        // console.log('Annual Interest Rate: ' + this.annualInterestRate)
+        // console.log('number of payments: ' + this.numberOfPayments)
+        // console.log('Installment Ammount: ' + this.installmentAmmount)
+        // console.log('frequency: ' + this.paymentFrequencyStr)
+        // console.log('Total Account balance: ' + this.totalAccountBalance)
+        // console.log('Total Interest Owing: ' + this.totalInterestOwing)
+        // console.log("Interest Method: Acturarial Method")
+
+        let headerDataStart = '<div class="headerData">'
+        let headerDataEnd = '</div>'
+        
+        // <div class="textAndVar"><p>Principle: </p><p> 121212 </p></div>
+        let headerData = '<div class="textAndVar"><p>Principle: </p><p> '+ this.principle +' </p></div>'
+        headerData = headerData + '<div class="textAndVar"><p>Annual interest rate: </p><p> '+ this.annualInterestRate +' </p></div>'
+        headerData = headerData + '<div class="textAndVar"><p>number of payments: </p><p> '+ this.numberOfPayments +' </p></div>'
+        headerData = headerData + '<div class="textAndVar"><p>Installment ammount: </p><p> '+ this.installmentAmmount +' </p></div>'        
+        headerData = headerData + '<div class="textAndVar"><p>Installment Frequency: </p><p> '+ this.paymentFrequencyStr +' </p></div>'
+        headerData = headerData + '<div class="textAndVar"><p>Total Account Balance: </p><p> '+ this.totalAccountBalance +' </p></div>'
+        headerData = headerData + '<div class="textAndVar"><p>Total Interest Owing: </p><p> '+ this.totalInterestOwing +' </p></div>'
+        headerData = headerData + '<div class="textAndVar"><p>Intrest Method: </p><p> Acturarial </p></div>'
+        
+
+        //str append
+        str = str + headerDataStart;
+        str = str + headerData;
+        str = str + headerDataEnd;
+
+
+        
+        //Spacer / Table data start
+        str = str + '<div class="spacer"> <p> ------------------------------- </p> </div> <div class="tableData"></div>'' 
+
+        
+        //Table Data ---------------------
+
+        // html components 
+            // standard row   <---- used for column names aswell not just data rows
+        // <div class="row">
+        //     <p class="rowItem"> 4 </p>
+        //     <p class="rowItem"> 1324432143 </p>
+        //     <p class="rowItem"> 31241324132 </p>
+        //     <p class="rowItem"> 100000.12 </p>
+        //     <p class="rowItem"> 31423512341 </p>
+        //     <p class="rowItem"> 12345678910 </p>
+        //     <p class="rowItem"> 9999 </p>
+        // </div>
+
+            //  year splitter
+        // <div class="spacer">
+        //     <p> ---- ----  ----  ----  ----  ----  ----  ----  ----  ---- </p>
+        // </div>
+        // <div class="tableDataInsert">
+        //     <div class="textAndVar">
+        //         <p> Year: </p>
+        //         <p> 1 </p>
+        //     </div>
+        //     <div class="varLeft">
+        //         <p> 16000.65 </p>
+        //     </div>
+        //     <div class="varLeft">
+        //         <p> 11000.12 </p>
+        //     </div>
+        // </div>
+        // <div class="spacer">
+        //     <p> ---- ----  ----  ----  ----  ----  ----  ----  ----  ---- </p>
+        // </div>
+
+            //end table data
+        // <div class="tableDataInsert">
+        //     <div class="itemCenter">
+        //         <p> Adjustment: </p>
+        //     </div>
+        //     <div class="itemLeft">
+        //         <p> 0.57 </p>
+        //     </div>
+        //     <div class="itemLeft">
+        //         <p> -0.57 </p>
+        //     </div>
+        // </div>
+        // <div class="tableDataInsert">
+        //     <div class="itemCenter">
+        //         <p> Totals: </p>
+        //     </div>
+        //     <div class="itemLeft">
+        //         <p> 120000 </p>
+        //     </div>
+        //     <div class="itemLeft">
+        //         <p> 18000 </p>
+        //     </div>
+        // </div>
+
+        //TableData Code
+
+
+        // log column names
+        let strColumns = '<div class="row">'
+        this.columnArray.forEach(e => {
+            strColumns = strColumns + ('<p class="rowItem">' + e + '</p>')
+        });
+        strColumns = strColumns + '</div>'
+        //append
+        str = str + strColumns
+
+
+        // print rows
+        //installmenst start with increment 1 and array index 0
+        let r = 0
+        let year = 1
+        this.rowArray.forEach(row => {
+
+            // read row
+            let strRow = '<div class="row">'
+            row.forEach(e => {
+                strRow = strRow + ('<p class="rowItem">' + e.toString + '</p>')
+            });
+            strRow = strRow + '</div>'
+            str = str + strRow
+
+            //if incremnt modulous , End year stmt with stats
+                //r+1 accounts for array index start from 0
+            if((r+1)%this.paymentFrequencyVal == 0 && r!=0){
+                str = str + '<div class="spacer"> <p> ---- ------------------------------------ </p> </div> <div class="tableDataInsert"> <div class="textAndVar"> <p> Year: </p> <p> '+ year + ' </p> </div> <div class="varLeft"> <p> '+this.rowArray[r][4]+' </p> </div> <div class="varLeft"> <p> '+ this.rowArray[r][3] + ' </p> </div> </div> <div class="spacer"> <p> ---- ------------------------------------ </p> </div>'
+                year++
+            }
+            r++
+        })
+    
+        // // adjustment / residual
+        // console.log("adjustment / residual") 
+        // console.log ("Principle: " + (this.rowArray[this.numberOfPayments -1][4] - this.principle).toFixed(2))
+        // console.log ("Interest Owing: " + (this.rowArray[this.numberOfPayments -1][3] - this.totalInterestOwing).toFixed(2))
+        // // final figures
+        // console.log("total paid") 
+        // console.log (this.principle)
+        // console.log (this.totalInterestOwing)
+
+
+
+        // Table data end / html end
+        str = str +  '</div> </div> </div> </body> </html>'
+
+
+        // //update object
+        this.reportStr = str
+    }
+
+    getReportString(){
+        return this.reportStr
     }
 
     //Getters ----------------
@@ -281,10 +474,10 @@ export function HirePurchaseAndLease(props) {
                       "Principle Component",
                       "Interest Component",
                       "Cumulative Interest",
+                      "Cumulative Principle",
                       "Interest Owing",
                       "Principle Outstanding",
-                      "AccountBalance",
-                      "Cumulative Principle"]
+                      "AccountBalance"]
 
         //Genereate report based on type HP or LEASE
             //if not Hire Purchase it is Lease
@@ -333,10 +526,10 @@ export function HirePurchaseAndLease(props) {
                 currentPrincipleComponent.toFixed(2),
                 currentInterestComp.toFixed(2),
                 cumulativeInterest.toFixed(2),
+                cumulativePrinciple.toFixed(2),
                 interestOwing.toFixed(2),
                 principleOutstanding.toFixed(2),
-                accountBalance.toFixed(2),
-                cumulativePrinciple.toFixed(2)]
+                accountBalance.toFixed(2)]
 
             // debug log
             // console.log(activeRow)
@@ -348,11 +541,18 @@ export function HirePurchaseAndLease(props) {
             i = i+1
         }
 
-        // create Report object
+        // create Report object with data
         let report = new Report(reportTypeRadioBtn,clientName,principle,annualInterestRate,numberOfPayments,installmentAmmount,paymentFrequencyRadioBtn,paymentFrequencyVal,arrColumnNames,incrementArr)
+        
+        //create the report string within the class
+        report.createReportString() //updates reportStr in the class with given data
+
+        //ensure app.js has report string for use in WebViewer
+        props.handleReportStr(report.getReportString())
 
         //set report to useState()
         setReport(report)
+        
 
 
     }
