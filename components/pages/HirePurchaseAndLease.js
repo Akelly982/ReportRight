@@ -34,7 +34,7 @@ class Report {
 
         // log init data 
         console.log('---------HEADER Data----------------------')
-        console.log('reportStr: ' + this.reportTypeStr)
+        console.log('reportStr: ' + this.reportStr)
         console.log('-------------------')
         console.log('Report type: ' + this.reportTypeStr)
         console.log('ClientName:' + this.clientName)
@@ -154,7 +154,7 @@ class Report {
 
         
         //Spacer / Table data start
-        str = str + '<div class="spacer"> <p> ------------------------------- </p> </div> <div class="tableData"></div>'' 
+        str = str + '<div class="spacer"> <p> ------------------------------- </p> </div> <div class="tableData"></div>' 
 
         
         //Table Data ---------------------
@@ -237,19 +237,26 @@ class Report {
             // read row
             let strRow = '<div class="row">'
             row.forEach(e => {
-                strRow = strRow + ('<p class="rowItem">' + e.toString + '</p>')
+                strRow = strRow + ('<p class="rowItem">' + e.toString() + '</p>')
             });
             strRow = strRow + '</div>'
             str = str + strRow
 
-            //if incremnt modulous , End year stmt with stats
+            //if incremnet is of modulous paymentfrequency, End year stmt with stats
                 //r+1 accounts for array index start from 0
             if((r+1)%this.paymentFrequencyVal == 0 && r!=0){
-                str = str + '<div class="spacer"> <p> ---- ------------------------------------ </p> </div> <div class="tableDataInsert"> <div class="textAndVar"> <p> Year: </p> <p> '+ year + ' </p> </div> <div class="varLeft"> <p> '+this.rowArray[r][4]+' </p> </div> <div class="varLeft"> <p> '+ this.rowArray[r][3] + ' </p> </div> </div> <div class="spacer"> <p> ---- ------------------------------------ </p> </div>'
+                str = str + '<div class="spacer"> <p> ---- ----  ----  ----  ----  ----  ----  ----  ----  ---- </p> </div> <div class="tableDataInsert"> <div class="textAndVar"> <p> Year: </p> <p> '+ year + ' </p> </div> <div class="varLeft"> <p> '+this.rowArray[r][4]+' </p> </div> <div class="varLeft"> <p> '+ this.rowArray[r][3] + ' </p> </div> </div> <div class="spacer"> <p> ---- ----  ----  ----  ----  ----  ----  ----  ----  ---- </p> </div>'
                 year++
             }
             r++
         })
+
+        // table data result print
+            //precalculate data
+        let offsetPrinciple = (this.rowArray[this.numberOfPayments -1][4] - this.principle).toFixed(2)
+        let offsetInterest = (this.rowArray[this.numberOfPayments -1][3] - this.totalInterestOwing).toFixed(2)
+            // use data and append
+        str = str + '<div class="tableDataInsert"> <div class="itemCenter"> <p> Adjustment: </p> </div> <div class="itemLeft"> <p> '+ offsetPrinciple.toString() +' </p> </div> <div class="itemLeft"> <p> '+ offsetInterest.toString() + ' </p> </div> </div> <div class="tableDataInsert"> <div class="itemCenter"> <p> Totals: </p> </div> <div class="itemLeft"> <p> '+ this.principle + ' </p> </div> <div class="itemLeft"> <p> '+ this.totalInterestOwing +'</p> </div> </div>'
     
         // // adjustment / residual
         // console.log("adjustment / residual") 
@@ -265,6 +272,8 @@ class Report {
         // Table data end / html end
         str = str +  '</div> </div> </div> </body> </html>'
 
+        // style
+        str = str + '<style> :root { --ReportColor: #fff; --ReportEdge: lightblue; --textColor: #3b3b3b; }p{ color: var(--textColor); } h3{ color: var(--textColor); } .mainContainer{ background-color: var(--ReportEdge); padding:25px; width: 1050px; display: flex; justify-content: center; } .reportContainer{ background-color: var(--ReportColor); /* 875 px is the width of the grid it has fixed width partially because i want it to*/ /* be zoomable on the mobile devices */ width: 1000px; padding: 20px; display: flex; flex-direction: column; }.title{ display: flex; flex-direction: row; justify-content: center; align-items: center; } .title h3{ padding-left: 5px; padding-right: 5px; } .spacer{ height: 30px; display: flex; justify-content: center; align-items: center; } .headerData{ width: 100%; display: grid; grid-template-columns: auto auto auto; } .textAndVar{ display: flex; flex-direction: row; align-items: center; justify-content: center; } .textAndVar p{ padding-left: 10px; padding-right: 10px; } /* ======== TABLE DATA ============ */ /* ================================ */ .tableData{ width: 100%; } .row{ display: grid; grid-template-columns: 125px 125px 125px 125px 125px 125px 125px 125px; /* grid-template-columns: auto auto auto auto auto auto auto; */ } .rowItem{ display:flex; justify-content: center; align-items: center; } .tableDataInsert{ display: grid; grid-template-columns: 150px 125px 125px 125px 125px 125px 125px 125px; } .tableEndText{ display: flex; flex-direction: column; justify-content: center; align-items: center; } .itemCenter{ display: flex; flex-direction: column; align-items: center; justify-content: center; } .itemLeft { display: flex; flex-direction: column; } </style>'
 
         // //update object
         this.reportStr = str
