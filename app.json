@@ -4,11 +4,11 @@
     "slug": "ReportRight",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/ReportRightLarge_512.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/ReportRight.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1c2122"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -16,15 +16,22 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.AkConnects.ReportRight",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "permissions": ["CAMERA","READ_EXTERNAL_STORAGE","WRITE_EXTERNAL_STORAGE"],
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "foregroundImage": "./assets/ReportRight_512.png",
+        "backgroundColor": "#1c2122"
+      },
+      "package": "com.AkConnects.ReportRight"
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     }

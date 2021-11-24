@@ -7,17 +7,10 @@ import { Spacer } from '../Spacer';
 
 const calculationList = [
     {id: 1, name: "Hire Purchase and Lease calculations", pageName: "HirePurchaseAndLease", pageReady: true},
-    {id: 2, name: "hypothertical Additional item lorem ipsum ipsum da lorum ma lorums"},
+    {id: 2, name: "Division 7A loan calculation"},
     // {id: '3', name: "hypothertical Additional item"},
     // {id: '4', name: "hypothertical Additional item"},
     // {id: '5', name: "hypothertical Additional item"},
-    // {id: '6', name: "hypothertical Additional item"},
-    // {id: '7', name: "hypothertical Additional item"},
-    // {id: '8', name: "hypothertical Additional item"},
-    // {id: '9', name: "hypothertical Additional item"},
-    // {id: '10', name: "hypothertical Additional item"},
-    // {id: '11', name: "hypothertical Additional item"},
-    // {id: '12', name: "hypothertical Additional item"},
 ]
 
 

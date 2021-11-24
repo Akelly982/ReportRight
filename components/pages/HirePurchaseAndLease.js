@@ -372,17 +372,17 @@ export function HirePurchaseAndLease(props) {
     // report
     const [report,setReport] = useState(null)
 
-    // user inputs 
-    const ANNUALINTERESTRATE_INITVALUE = 4.5
-    const PRINCIPLE_INITVALUE = 100000
-    const NUMBEROFPAYMENTS_INITVALUE = 60
-    const INSTALLMENTAMMOUNT_INITVALUE = null
-    const PAYMENTFREQUENCYVAL_INITVALUE = 12
+    // user inputs fields
+    const ANNUALINTERESTRATE_INITVALUE = 4.5     // input text hint
+    const PRINCIPLE_INITVALUE = 100000           // input text hint
+    const NUMBEROFPAYMENTS_INITVALUE = 60        // input text hint
+    const INSTALLMENTAMMOUNT_INITVALUE = null   // null due to not genereated yet
+    const PAYMENTFREQUENCYVAL_INITVALUE = 12    // monthly for RadioBtn
 
     const [clientName,setClientName] = useState(null)
-    const [annualInterestRate,setAnnualInterestRate] = useState(ANNUALINTERESTRATE_INITVALUE)
-    const [principle,setPrinciple] = useState(PRINCIPLE_INITVALUE)
-    const [numberOfPayments,setNumberOfPayments] = useState(NUMBEROFPAYMENTS_INITVALUE)
+    const [annualInterestRate,setAnnualInterestRate] = useState(null)
+    const [principle,setPrinciple] = useState(null)
+    const [numberOfPayments,setNumberOfPayments] = useState(null)
     const [installmentAmmount,setInstallmentAmmount] = useState(INSTALLMENTAMMOUNT_INITVALUE)
     const [paymentFrequencyVal,setPaymentFrequencyVal] = useState(PAYMENTFREQUENCYVAL_INITVALUE)
     
