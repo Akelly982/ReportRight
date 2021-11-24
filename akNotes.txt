@@ -96,17 +96,19 @@ Note this fix dose not seem to effect expo styling
 
 
 // expo file system  // this is shared by all expo apps on a local filesystem
+                // Additionally this libary is going to be used to make a copy of the URI / cached document
+                // to change the name from random characters to a defined file name
 https://docs.expo.dev/versions/latest/sdk/filesystem/
 #CMD    expo install expo-file-system
 
 
-//Expo notes on both below libaries should work for both mobile devices but not for web
+    //Expo notes on both below libaries should work for both mobile devices but not for web
 
-// FileSystem for Android -- media libary
-#CMD     expo install expo-media-library
+    // FileSystem for Android -- media libary
+    #CMD     expo install expo-media-library
 
-// FileSystem for IOS  -- IOS   
-#CMD     expo install expo-sharing
+    // FileSystem for IOS  -- IOS   
+    #CMD     expo install expo-sharing
 
 
 
