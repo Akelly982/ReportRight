@@ -397,7 +397,7 @@ export function HirePurchaseAndLease(props) {
         // this is later converted to paymentFrequencyVal  
             // (12 months per year) / (52 weeks per year) / etc
     const WEEKLY = 'Weekly'
-    const FORTNIGHTLY = 'Fornightly'
+    const FORTNIGHTLY = 'Fortnightly'
     const MONTHLY = 'Monthly'
     const QUARTERLY = 'Quarterly'
     const HALFYEARLY = "Half Yearly"
@@ -864,7 +864,7 @@ export function HirePurchaseAndLease(props) {
 
 
                     <TouchableOpacity style={hplStyles.calculateInstallmentAmmountInputBtn} onPress={() => calculateInstallmentAmmount()}>
-                        <Text style={hplStyles.calculateInstallmentAmmountInputBtnText}> Calculate Installment Ammount </Text>
+                        <Text style={hplStyles.calculateInstallmentAmmountInputBtnText}> Calculate Installment Amount </Text>
                     </TouchableOpacity>
 
                 </View>
