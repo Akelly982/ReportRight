@@ -2,9 +2,9 @@
   "expo": {
     "name": "ReportRight",
     "slug": "ReportRight",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
-    "icon": "./assets/ReportRightLarge_512.png",
+    "icon": "./assets/ReportRightLarge2_512.png",
     "splash": {
       "image": "./assets/ReportRight.png",
       "resizeMode": "contain",
@@ -20,11 +20,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.AkConnects.ReportRight",
-      "buildNumber": "2.0.0"
+      "buildNumber": "3.0.0"
     },
     "android": {
       "permissions": ["CAMERA","READ_EXTERNAL_STORAGE","WRITE_EXTERNAL_STORAGE"],
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/ReportRight_512.png",
         "backgroundColor": "#1c2122"
