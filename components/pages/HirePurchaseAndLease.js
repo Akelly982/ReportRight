@@ -621,14 +621,14 @@ export function HirePurchaseAndLease(props) {
     
             } else {   //android
               const permission = await MediaLibrary.requestPermissionsAsync();
-              console.log(permission.status)
+              alert(permission.status)
               if (permission.granted){
                 await MediaLibrary.createAssetAsync(f)
                 .then((file) => {
                   alert("Pdf downloaded: Check DCIM folder for reportRight.pdf")
                 })
                 .catch((err) =>{
-                    alert.log("Permission Error: " + err)
+                    alert("Permission Error: " + err)
                 })   
               }
             }
