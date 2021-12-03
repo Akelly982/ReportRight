@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState,useEffect} from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Animated} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Animated, YellowBox} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import * as FileSystem from "expo-file-system";
@@ -367,7 +367,8 @@ export function HirePurchaseAndLease(props) {
     const navigation = useNavigation()
 
     // debug log report btn
-    const LOGREPORTBTN = true
+        //adds an additional button to bottom of the main page to console.log out the report
+    const LOGREPORTBTN = false
 
     // report
     const [report,setReport] = useState(null)
@@ -624,10 +625,10 @@ export function HirePurchaseAndLease(props) {
               if (permission.granted){
                 await MediaLibrary.createAssetAsync(f)
                 .then((file) => {
-                  alert("Pdf downloaded check DCIM folder for reportRight.pdf")
+                  alert("Pdf downloaded: Check DCIM folder for reportRight.pdf")
                 })
                 .catch((err) =>{
-                    console.log(err)
+                    alert.log("Permission Error: " + err)
                 })   
               }
             }
@@ -696,12 +697,14 @@ export function HirePurchaseAndLease(props) {
             <View style={hplStyles.outerCont}>
                 <View style={hplStyles.innerCont}>
                     <View style={hplStyles.rbReportCont}>
+
                             <TouchableOpacity style={hplStyles.rbReportItem} onPress={() => setReportTypeRadioButton(HIREPURCHASE)}>
                                 <View style={hplStyles.inputFieldRadioButton}>
                                     <View style={(reportTypeRadioBtn == HIREPURCHASE) ? hplStyles.inputFieldRadioButton_Active : null }/>
                                 </View>
                                 <Text> Hire Purchase </Text>
                             </TouchableOpacity>
+
                             {/* onPress={() => setReportTypeRadioButton(LEASE)     <-- put in place when Lease Report is ready */}
                             <TouchableOpacity style={hplStyles.rbReportItem} onPress={() => alert("Lease Report type is not ready sorry..")}>
                                 <View style={hplStyles.inputFieldRadioButton}>
@@ -709,7 +712,6 @@ export function HirePurchaseAndLease(props) {
                                 </View>
                                 <Text> Lease </Text>
                             </TouchableOpacity>
-
                     </View>
                 </View>
             </View>
@@ -725,28 +727,30 @@ export function HirePurchaseAndLease(props) {
                     <View style={hplStyles.rbFrequencyCont}>
                         <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(WEEKLY)}>
                             <View style={hplStyles.inputFieldRadioButton}>
-                                <Text style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                <View style={(paymentFrequencyRadioBtn == WEEKLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
                             <Text> {WEEKLY} </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(FORTNIGHTLY)}>
                         <View style={hplStyles.inputFieldRadioButton}>
-                                <Text style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                <View style={(paymentFrequencyRadioBtn == FORTNIGHTLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
                             <Text> {FORTNIGHTLY} </Text>
                         </TouchableOpacity>
                     </View>
+
+                    
                     {/* Row 2 */}
                     <View style={hplStyles.rbFrequencyCont}>
                         <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(MONTHLY)}>
                         <View style={hplStyles.inputFieldRadioButton}>
-                                <Text style={(paymentFrequencyRadioBtn == MONTHLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                <View style={(paymentFrequencyRadioBtn == MONTHLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
                             <Text> {MONTHLY} </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(QUARTERLY)}>
                         <View style={hplStyles.inputFieldRadioButton}>
-                                <Text style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                <View style={(paymentFrequencyRadioBtn == QUARTERLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
                             <Text> {QUARTERLY} </Text>
                         </TouchableOpacity>
@@ -755,13 +759,13 @@ export function HirePurchaseAndLease(props) {
                     <View style={hplStyles.rbFrequencyCont}>
                         <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(HALFYEARLY)}>
                         <View style={hplStyles.inputFieldRadioButton}>
-                                <Text style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                <View style={(paymentFrequencyRadioBtn == HALFYEARLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
                             <Text> {HALFYEARLY} </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={hplStyles.rbFrequencyItem} onPress={() => setPaymentFrequency(ANNUALLY)}>
                         <View style={hplStyles.inputFieldRadioButton}>
-                                <Text style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
+                                <View style={(paymentFrequencyRadioBtn == ANNUALLY) ? hplStyles.inputFieldRadioButton_Active : null }/>
                             </View>
                             <Text> {ANNUALLY} </Text>
                         </TouchableOpacity>
@@ -948,6 +952,22 @@ const hplStyles = StyleSheet.create({
     },
 
 
+      // increments RB
+    rbFrequencyCont:{
+        marginVertical: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+    },
+
+    rbFrequencyItem:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+
 
     // inputFields and Labels
 
@@ -984,28 +1004,13 @@ const hplStyles = StyleSheet.create({
     },
 
     inputField:{
+        marginTop:5,
         backgroundColor: '#fff',
+        paddingVertical: 5,
     },
 
 
-    
 
-
-    // increments RB
-
-    rbFrequencyCont:{
-        marginVertical: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-    },
-
-    rbFrequencyItem:{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
 
     // Buttons
