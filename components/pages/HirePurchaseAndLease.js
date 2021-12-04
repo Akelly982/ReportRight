@@ -36,8 +36,8 @@ class Report {
         this.columnArray = columnArray;
         this.rowArray = rowArray;
 
-        this.totalAccountBalance = installmentAmmount * numberOfPayments
-        this.totalInterestOwing = (installmentAmmount * numberOfPayments) - principle
+        this.totalAccountBalance = (installmentAmmount * numberOfPayments).toFixed(2)
+        this.totalInterestOwing = ((installmentAmmount * numberOfPayments) - principle).toFixed(2)
 
         this.reportStr = null;
     }
