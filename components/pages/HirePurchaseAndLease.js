@@ -621,7 +621,7 @@ export function HirePurchaseAndLease(props) {
     
             } else {   //android
               const permission = await MediaLibrary.requestPermissionsAsync();
-              alert(permission.status)
+                //   console.log(permission.status)
               if (permission.granted){
                 await MediaLibrary.createAssetAsync(f)
                 .then((file) => {
