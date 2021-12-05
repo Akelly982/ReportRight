@@ -8,7 +8,7 @@ The project uses
  - ReactNavigation
 
 ---
-#installation
+# Installation
 
 Clone the git libary or download
 
